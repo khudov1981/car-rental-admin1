@@ -2,7 +2,7 @@
 const CARS_STORAGE_KEY = 'carRentalCars'
 
 // Функция для получения автомобилей из localStorage или возврата временных данных
-const getCarsFromStorage = () => {
+export const getCarsFromStorage = () => {
   try {
     const storedData = localStorage.getItem(CARS_STORAGE_KEY)
     if (storedData) {
