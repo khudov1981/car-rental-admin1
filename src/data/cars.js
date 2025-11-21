@@ -9,7 +9,7 @@ export const carsData = [
     plate: 'A123BC',
     status: 'available',
     pricePerDay: 2500,
-    image: '/src/assets/images/car1.jpg'
+    image: './src/assets/images/car1.jpg'
   },
   {
     id: 2,
@@ -20,7 +20,7 @@ export const carsData = [
     plate: 'B456CD',
     status: 'rented',
     pricePerDay: 4500,
-    image: '/src/assets/images/car2.jpg'
+    image: './src/assets/images/car2.jpg'
   },
   {
     id: 3,
@@ -31,7 +31,7 @@ export const carsData = [
     plate: 'C789EF',
     status: 'available',
     pricePerDay: 3500,
-    image: '/src/assets/images/car3.jpg'
+    image: './src/assets/images/car3.jpg'
   },
   {
     id: 4,
@@ -42,7 +42,7 @@ export const carsData = [
     plate: 'D123GH',
     status: 'available',
     pricePerDay: 4000,
-    image: '/src/assets/images/car4.jpg'
+    image: './src/assets/images/car4.jpg'
   },
   {
     id: 5,
@@ -53,7 +53,7 @@ export const carsData = [
     plate: 'E456IJ',
     status: 'maintenance',
     pricePerDay: 2000,
-    image: '/src/assets/images/car5.jpg'
+    image: './src/assets/images/car5.jpg'
   },
   {
     id: 6,
@@ -64,7 +64,7 @@ export const carsData = [
     plate: 'F789KL',
     status: 'available',
     pricePerDay: 3000,
-    image: '/src/assets/images/car6.jpg'
+    image: './src/assets/images/car6.jpg'
   }
 ]
 
