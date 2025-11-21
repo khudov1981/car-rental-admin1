@@ -5,7 +5,7 @@ import CarList from './components/CarList'
 import ConfirmModal from './components/ConfirmModal'
 import EditCarForm from './components/EditCarForm'
 import AddCarForm from './components/AddCarForm'
-import { addCar, updateCar, deleteCar, restoreCar, getActiveCars, getDeletedCars } from './data/cars'
+import { addCar, updateCar, deleteCar, restoreCar, getActiveCars, getDeletedCars, getCarsFromStorage } from './data/cars'
 
 function App() {
   const [activePage, setActivePage] = useState('cars')
@@ -16,6 +16,12 @@ function App() {
   const [showDeleted, setShowDeleted] = useState(false)
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [carToDelete, setCarToDelete] = useState(null)
+
+  // Инициализация данных об автомобилях из localStorage
+  useEffect(() => {
+    const storedCars = getCarsFromStorage()
+    setCars(storedCars)
+  }, [])
 
   useEffect(() => {
     // Инициализация Telegram WebApp
