@@ -1,10 +1,15 @@
 import React, { useState, useEffect } from 'react'
 import './App.css'
 import Navigation from './components/Navigation'
+import CarCard from './components/CarCard'
+import { carsData, addCar, updateCar, deleteCar } from './data/cars'
 
 function App() {
   const [activePage, setActivePage] = useState('cars')
   const [telegramUser, setTelegramUser] = useState(null)
+  const [cars, setCars] = useState(carsData)
+  const [showAddForm, setShowAddForm] = useState(false)
+  const [editingCar, setEditingCar] = useState(null)
 
   useEffect(() => {
     // Инициализация Telegram WebApp
@@ -22,6 +27,29 @@ function App() {
     }
   }, [])
 
+  const handleAddCar = (carData) => {
+    const newCar = addCar(carData)
+    setCars([...cars, newCar])
+    setShowAddForm(false)
+  }
+
+  const handleUpdateCar = (id, carData) => {
+    const updatedCar = updateCar(id, carData)
+    if (updatedCar) {
+      setCars(cars.map(car => car.id === id ? updatedCar : car))
+    }
+    setEditingCar(null)
+  }
+
+  const handleDeleteCar = (id) => {
+    deleteCar(id)
+    setCars(cars.filter(car => car.id !== id))
+  }
+
+  const handleEditCar = (car) => {
+    setEditingCar(car)
+  }
+
   return (
     <div className="App">
       <header className="app-header">
@@ -36,10 +64,25 @@ function App() {
       <main className="app-content">
         {activePage === 'cars' && (
           <div className="page-content">
-            <h2>Автомобили</h2>
-            <div className="content-placeholder">
-              <p>Здесь будет список автомобилей</p>
-              <button className="tg-button">Добавить автомобиль</button>
+            <div className="page-header">
+              <h2>Автомобили</h2>
+              <button 
+                className="tg-button add-car-button"
+                onClick={() => setShowAddForm(true)}
+              >
+                + Добавить авто
+              </button>
+            </div>
+            
+            <div className="cars-list">
+              {cars.map(car => (
+                <CarCard 
+                  key={car.id}
+                  car={car}
+                  onEdit={handleEditCar}
+                  onDelete={handleDeleteCar}
+                />
+              ))}
             </div>
           </div>
         )}
