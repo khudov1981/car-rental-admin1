@@ -7,11 +7,10 @@
   justify-content: space-around;
   align-items: center;
   height: 70px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+  background: var(--tg-theme-bg-color, #ffffff);
+  border-top: 1px solid var(--tg-theme-hint-color, #e0e0e0);
   padding: 0 20px;
-  border-top-left-radius: 20px;
-  border-top-right-radius: 20px;
+  backdrop-filter: blur(10px);
 }
 
 .nav-button {
@@ -21,7 +20,7 @@
   justify-content: center;
   background: none;
   border: none;
-  color: rgba(255, 255, 255, 0.7);
+  color: var(--tg-theme-hint-color, #999999);
   cursor: pointer;
   padding: 10px 15px;
   border-radius: 15px;
@@ -29,19 +28,16 @@
   flex: 1;
   height: 100%;
   margin: 0 8px;
-  backdrop-filter: blur(10px);
 }
 
 .nav-button:hover {
-  background: rgba(255, 255, 255, 0.1);
-  color: #fff;
+  background: var(--tg-theme-secondary-bg-color, #f0f0f0);
+  color: var(--tg-theme-text-color, #000000);
   transform: translateY(-3px);
 }
 
 .nav-button.active {
-  background: rgba(255, 255, 255, 0.2);
-  color: #fff;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  color: var(--tg-theme-button-color, #229ed9);
 }
 
 .nav-button .icon {
