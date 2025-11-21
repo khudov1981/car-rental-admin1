@@ -5,12 +5,12 @@ import CarList from './components/CarList'
 import ConfirmModal from './components/ConfirmModal'
 import EditCarForm from './components/EditCarForm'
 import AddCarForm from './components/AddCarForm'
-import { carsData, addCar, updateCar, deleteCar, restoreCar, getActiveCars, getDeletedCars } from './data/cars'
+import { addCar, updateCar, deleteCar, restoreCar, getActiveCars, getDeletedCars } from './data/cars'
 
 function App() {
   const [activePage, setActivePage] = useState('cars')
   const [telegramUser, setTelegramUser] = useState(null)
-  const [cars, setCars] = useState(carsData)
+  const [cars, setCars] = useState([])
   const [showAddForm, setShowAddForm] = useState(false)
   const [editingCar, setEditingCar] = useState(null)
   const [showDeleted, setShowDeleted] = useState(false)
