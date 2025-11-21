@@ -61,7 +61,7 @@ const CarCard = ({ car, onEdit, onDelete, onRestore, showDeleted }) => {
   return (
     <div className={`car-card ${showDeleted ? 'deleted' : ''}`}>
       {/* Компактный вид */}
-      <div className="car-summary" onClick={toggleExpand}>
+      <div className="car-summary" onClick={showDeleted ? null : toggleExpand} style={{ cursor: showDeleted ? 'default' : 'pointer' }}>
         <div className="car-basic-info">
           <h3 className="car-title">{car.brand} {car.model}</h3>
           <div className="car-plate">{car.plate}</div>
@@ -84,61 +84,42 @@ const CarCard = ({ car, onEdit, onDelete, onRestore, showDeleted }) => {
           )}
         </div>
         <div className="expand-icon">
-          {isExpanded ? '▲' : '▼'}
+          {showDeleted ? null : (isExpanded ? '▲' : '▼')}
         </div>
       </div>
 
+      {/* Кнопка восстановления для удаленных авто (всегда видна) */}
+      {showDeleted && (
+        <div className="restore-actions">
+          <button className="restore-button" onClick={() => onRestore(car.id)}>
+            Восстановить
+          </button>
+        </div>
+      )}
+
       {/* Раскрытый вид с дополнительной информацией */}
-      {isExpanded && (
+      {isExpanded && !showDeleted && (
         <div className="car-details-expanded">
-          {showDeleted ? (
-            <>
-              <div className="car-detail-row">
-                <span className="detail-label">Дата удаления:</span>
-                <span className="detail-value">{formatDeletedAt(car.deletedAt)}</span>
-              </div>
-              <div className="car-detail-row">
-                <span className="detail-label">Год:</span>
-                <span className="detail-value">{car.year}</span>
-              </div>
-              <div className="car-detail-row">
-                <span className="detail-label">Цвет:</span>
-                <span className="detail-value">{car.color}</span>
-              </div>
-              <div className="car-detail-row">
-                <span className="detail-label">Коробка:</span>
-                <span className="detail-value">{getTransmissionText(car.transmission)}</span>
-              </div>
-              <div className="car-actions-expanded">
-                <button className="restore-button" onClick={() => onRestore(car.id)}>
-                  Восстановить
-                </button>
-              </div>
-            </>
-          ) : (
-            <>
-              <div className="car-detail-row">
-                <span className="detail-label">Год:</span>
-                <span className="detail-value">{car.year}</span>
-              </div>
-              <div className="car-detail-row">
-                <span className="detail-label">Цвет:</span>
-                <span className="detail-value">{car.color}</span>
-              </div>
-              <div className="car-detail-row">
-                <span className="detail-label">Коробка:</span>
-                <span className="detail-value">{getTransmissionText(car.transmission)}</span>
-              </div>
-              <div className="car-actions-expanded">
-                <button className="edit-button" onClick={() => onEdit(car)}>
-                  Редактировать
-                </button>
-                <button className="delete-button" onClick={() => onDelete(car.id)}>
-                  Удалить
-                </button>
-              </div>
-            </>
-          )}
+          <div className="car-detail-row">
+            <span className="detail-label">Год:</span>
+            <span className="detail-value">{car.year}</span>
+          </div>
+          <div className="car-detail-row">
+            <span className="detail-label">Цвет:</span>
+            <span className="detail-value">{car.color}</span>
+          </div>
+          <div className="car-detail-row">
+            <span className="detail-label">Коробка:</span>
+            <span className="detail-value">{getTransmissionText(car.transmission)}</span>
+          </div>
+          <div className="car-actions-expanded">
+            <button className="edit-button" onClick={() => onEdit(car)}>
+              Редактировать
+            </button>
+            <button className="delete-button" onClick={() => onDelete(car.id)}>
+              Удалить
+            </button>
+          </div>
         </div>
       )}
     </div>
