@@ -5,7 +5,66 @@ import CarSearch from './CarSearch'
 const CarList = ({ cars, onEdit, onDelete }) => {
   const [searchTerm, setSearchTerm] = useState('')
   const [filters, setFilters] = useState({ status: 'all', brand: 'all' })
-  const [sortBy, setSortBy] = useState('brand')
+  const [sortBy, setSortBy] = useState('priceAsc')
+
+  // Маппинг русских названий марок автомобилей
+  const brandTranslations = {
+    'тойота': 'Toyota',
+    'тойоте': 'Toyota',
+    'тойоты': 'Toyota',
+    'бмв': 'BMW',
+    'бэха': 'BMW',
+    'беха': 'BMW',
+    'мерседес': 'Mercedes',
+    'мерсы': 'Mercedes',
+    'мерс': 'Mercedes',
+    'ауди': 'Audi',
+    'фольксваген': 'Volkswagen',
+    'фольцваген': 'Volkswagen',
+    'ваген': 'Volkswagen',
+    'вольво': 'Volvo',
+    'форд': 'Ford',
+    'хонда': 'Honda',
+    'мазда': 'Mazda',
+    'ниссан': 'Nissan',
+    'лексус': 'Lexus',
+    'инфинити': 'Infiniti',
+    'акура': 'Acura',
+    'субару': 'Subaru',
+    'митсубиси': 'Mitsubishi',
+    'мазерати': 'Maserati',
+    'феррари': 'Ferrari',
+    'ламборгини': 'Lamborghini',
+    'порше': 'Porsche',
+    'бентли': 'Bentley',
+    'роллс': 'Rolls-Royce',
+    'астон': 'Aston Martin',
+    'макларен': 'McLaren',
+    'тесла': 'Tesla',
+    'шевроле': 'Chevrolet',
+    'шевролет': 'Chevrolet',
+    'опель': 'Opel',
+    'сааб': 'Saab',
+    'скания': 'Scania',
+    'ман': 'MAN',
+    'ивеко': 'Iveco',
+    'дэу': 'Daewoo',
+    'киа': 'Kia',
+    'хендэ': 'Hyundai',
+    'хюндэ': 'Hyundai',
+    'маз': 'MAZ',
+    'камаз': 'KAMAZ',
+    'газ': 'GAZ',
+    'уаз': 'UAZ',
+    'лада': 'Lada',
+    'ваз': 'VAZ',
+    'жигули': 'Lada',
+    'самара': 'Lada',
+    'калина': 'Lada',
+    'приора': 'Lada',
+    'гранта': 'Lada',
+    'веста': 'Lada'
+  }
 
   // Получаем уникальные марки для фильтра
   const uniqueBrands = useMemo(() => {
@@ -21,13 +80,8 @@ const CarList = ({ cars, onEdit, onDelete }) => {
           return a.pricePerDay - b.pricePerDay
         case 'priceDesc':
           return b.pricePerDay - a.pricePerDay
-        case 'yearDesc':
-          return b.year - a.year
-        case 'yearAsc':
-          return a.year - b.year
-        case 'brand':
         default:
-          return a.brand.localeCompare(b.brand) || a.model.localeCompare(b.model)
+          return a.pricePerDay - b.pricePerDay
       }
     })
     return sorted
@@ -36,11 +90,19 @@ const CarList = ({ cars, onEdit, onDelete }) => {
   // Фильтрация и поиск
   const filteredCars = useMemo(() => {
     return sortedCars.filter(car => {
-      // Поиск по тексту
+      // Поиск по тексту (с поддержкой русских названий)
       const matchesSearch = !searchTerm || 
         car.brand.toLowerCase().includes(searchTerm.toLowerCase()) ||
         car.model.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        car.plate.toLowerCase().includes(searchTerm.toLowerCase())
+        car.plate.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        // Проверка на русские названия марок
+        (brandTranslations[searchTerm.toLowerCase()] && 
+         car.brand.toLowerCase() === brandTranslations[searchTerm.toLowerCase()].toLowerCase()) ||
+        // Проверка на частичное совпадение с русскими названиями
+        Object.keys(brandTranslations).some(russianBrand => 
+          russianBrand.includes(searchTerm.toLowerCase()) && 
+          car.brand.toLowerCase() === brandTranslations[russianBrand].toLowerCase()
+        )
       
       // Фильтр по статусу
       const matchesStatus = filters.status === 'all' || car.status === filters.status
@@ -50,7 +112,7 @@ const CarList = ({ cars, onEdit, onDelete }) => {
       
       return matchesSearch && matchesStatus && matchesBrand
     })
-  }, [sortedCars, searchTerm, filters])
+  }, [sortedCars, searchTerm, filters, brandTranslations])
 
   const handleSearch = (term) => {
     setSearchTerm(term)
@@ -132,7 +194,7 @@ const CarList = ({ cars, onEdit, onDelete }) => {
         <div style={{
           display: 'flex',
           flexDirection: 'column',
-          gap: '16px'
+          gap: '12px'
         }}>
           <div style={{
             padding: '8px 0',
