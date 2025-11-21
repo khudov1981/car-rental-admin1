@@ -1,0 +1,43 @@
+.car-list-container {
+  width: 100%;
+}
+
+.car-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.results-info {
+  padding: 8px 0;
+  font-size: 0.9rem;
+  color: var(--tg-theme-hint-color, #666666);
+  text-align: center;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  text-align: center;
+  color: var(--tg-theme-hint-color, #999999);
+}
+
+.empty-icon {
+  font-size: 3rem;
+  margin-bottom: 16px;
+  opacity: 0.3;
+}
+
+.empty-state h3 {
+  margin: 0 0 8px 0;
+  color: var(--tg-theme-text-color, #000000);
+  font-size: 1.2rem;
+}
+
+.empty-state p {
+  margin: 0;
+  font-size: 0.9rem;
+}
