@@ -117,7 +117,7 @@ export const addCar = (car) => {
     casco: car.casco || '',
     photos: car.photos || []
   }
-  carsData.push(newCar)
+  carsData.unshift(newCar) // Добавляем в начало массива
   return newCar
 }
 

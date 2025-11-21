@@ -35,7 +35,8 @@ function App() {
 
   const handleAddCar = (carData) => {
     const newCar = addCar(carData)
-    setCars([...cars, newCar])
+    // Обновляем состояние, добавляя новый автомобиль в начало массива
+    setCars([newCar, ...cars])
     setShowAddForm(false)
   }
 
