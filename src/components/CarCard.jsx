@@ -58,13 +58,56 @@ const CarCard = ({ car, onEdit, onDelete, onRestore, showDeleted }) => {
     })
   }
 
+  // Форматирование отображаемого значения госномера
+  const formatPlateDisplay = (value) => {
+    if (!value) return ''
+    
+    // Формат: X000XX000 (1 буква, 3 цифры, 2 буквы, 2-3 цифры региона)
+    const cleanValue = value.replace(/[^A-Z0-9А-Я]/g, '')
+    
+    if (cleanValue.length <= 1) {
+      return cleanValue
+    } else if (cleanValue.length <= 4) {
+      return cleanValue.substring(0, 1) + cleanValue.substring(1).replace(/\D/g, '')
+    } else if (cleanValue.length <= 6) {
+      const letterPart = cleanValue.substring(0, 1)
+      const numberPart = cleanValue.substring(1, 4)
+      const letterPart2 = cleanValue.substring(4, 6)
+      return letterPart + numberPart + letterPart2
+    } else {
+      const letterPart = cleanValue.substring(0, 1)
+      const numberPart = cleanValue.substring(1, 4)
+      const letterPart2 = cleanValue.substring(4, 6)
+      const regionPart = cleanValue.substring(6, 9)
+      return letterPart + numberPart + letterPart2 + regionPart
+    }
+  }
+
+  // Форматирование отображаемого значения ОСАГО
+  const formatInsuranceDisplay = (value) => {
+    if (!value) return ''
+    
+    // Формат: XXX0000000000 (3 буквы, 10 цифр)
+    const cleanValue = value.replace(/[^A-Z0-9]/g, '')
+    
+    if (cleanValue.length <= 3) {
+      return cleanValue
+    } else if (cleanValue.length <= 13) {
+      const letterPart = cleanValue.substring(0, 3)
+      const numberPart = cleanValue.substring(3, 13)
+      return letterPart + numberPart
+    } else {
+      return cleanValue.substring(0, 13)
+    }
+  }
+
   return (
     <div className={`car-card ${showDeleted ? 'deleted' : ''}`}>
       {/* Компактный вид */}
       <div className="car-summary" onClick={showDeleted ? null : toggleExpand} style={{ cursor: showDeleted ? 'default' : 'pointer' }}>
         <div className="car-basic-info">
           <h3 className="car-title">{car.brand} {car.model}</h3>
-          <div className="car-plate">{car.plate}</div>
+          <div className="car-plate">{formatPlateDisplay(car.plate)}</div>
         </div>
         <div className="car-meta">
           {showDeleted ? (
@@ -115,7 +158,7 @@ const CarCard = ({ car, onEdit, onDelete, onRestore, showDeleted }) => {
           {car.insurance && (
             <div className="car-detail-row">
               <span className="detail-label">ОСАГО:</span>
-              <span className="detail-value">{car.insurance}</span>
+              <span className="detail-value">{formatInsuranceDisplay(car.insurance)}</span>
             </div>
           )}
           {car.casco && (

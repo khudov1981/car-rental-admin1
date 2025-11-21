@@ -17,17 +17,80 @@ const EditCarForm = ({ car, onSave, onCancel }) => {
   }
 
   const handlePlateChange = (e) => {
-    // Ограничиваем ввод только буквами и цифрами
-    const value = e.target.value.replace(/[^a-zA-Z0-9а-яА-Я]/g, '')
-    setPlate(value.toUpperCase())
+    // Формат госномера: X000XX000 (1 буква, 3 цифры, 2 буквы, 2-3 цифры региона)
+    let value = e.target.value.toUpperCase().replace(/[^A-Z0-9А-Я]/g, '')
+    
+    // Ограничиваем длину до 9 символов (без учета дефиса)
+    if (value.length > 9) {
+      value = value.substring(0, 9)
+    }
+    
+    setPlate(value)
   }
 
   const handleInsuranceChange = (e) => {
-    setInsurance(e.target.value)
+    // Формат ОСАГО: 3 буквы, 10 цифр (всего 13 символов)
+    let value = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '')
+    
+    // Ограничиваем длину до 13 символов
+    if (value.length > 13) {
+      value = value.substring(0, 13)
+    }
+    
+    setInsurance(value)
   }
 
   const handleCascoChange = (e) => {
-    setCasco(e.target.value)
+    // Формат КАСКО: произвольная строка до 20 символов
+    let value = e.target.value.toUpperCase()
+    
+    // Ограничиваем длину до 20 символов
+    if (value.length > 20) {
+      value = value.substring(0, 20)
+    }
+    
+    setCasco(value)
+  }
+
+  // Форматирование отображаемого значения госномера
+  const formatPlateDisplay = (value) => {
+    if (!value) return ''
+    
+    // Формат: X000XX000 (1 буква, 3 цифры, 2 буквы, 2-3 цифры региона)
+    const cleanValue = value.replace(/[^A-Z0-9А-Я]/g, '')
+    
+    if (cleanValue.length <= 1) {
+      return cleanValue
+    } else if (cleanValue.length <= 4) {
+      return cleanValue.substring(0, 1) + cleanValue.substring(1).replace(/\D/g, '')
+    } else if (cleanValue.length <= 6) {
+      const letterPart = cleanValue.substring(0, 1)
+      const numberPart = cleanValue.substring(1, 4)
+      const letterPart2 = cleanValue.substring(4, 6)
+      return letterPart + numberPart + letterPart2
+    } else {
+      const letterPart = cleanValue.substring(0, 1)
+      const numberPart = cleanValue.substring(1, 4)
+      const letterPart2 = cleanValue.substring(4, 6)
+      const regionPart = cleanValue.substring(6, 9)
+      return letterPart + numberPart + letterPart2 + regionPart
+    }
+  }
+
+  // Форматирование отображаемого значения ОСАГО
+  const formatInsuranceDisplay = (value) => {
+    if (!value) return ''
+    
+    // Формат: XXX0000000000 (3 буквы, 10 цифр)
+    const cleanValue = value.replace(/[^A-Z0-9]/g, '')
+    
+    if (cleanValue.length <= 3) {
+      return cleanValue
+    } else {
+      const letterPart = cleanValue.substring(0, 3)
+      const numberPart = cleanValue.substring(3, 13)
+      return letterPart + numberPart
+    }
   }
 
   return (
@@ -49,14 +112,14 @@ const EditCarForm = ({ car, onSave, onCancel }) => {
             <input
               type="text"
               id="plate"
-              value={plate}
+              value={formatPlateDisplay(plate)}
               onChange={handlePlateChange}
               placeholder="Введите госномер"
               maxLength="9"
               className="form-input"
               autoFocus
             />
-            <div className="input-hint">Только буквы и цифры</div>
+            <div className="input-hint">Формат: X000XX000</div>
           </div>
           
           <div className="form-group">
@@ -64,11 +127,13 @@ const EditCarForm = ({ car, onSave, onCancel }) => {
             <input
               type="text"
               id="insurance"
-              value={insurance}
+              value={formatInsuranceDisplay(insurance)}
               onChange={handleInsuranceChange}
               placeholder="Введите номер ОСАГО"
+              maxLength="13"
               className="form-input"
             />
+            <div className="input-hint">Формат: XXX0000000000 (3 буквы, 10 цифр)</div>
           </div>
           
           <div className="form-group">
@@ -79,8 +144,10 @@ const EditCarForm = ({ car, onSave, onCancel }) => {
               value={casco}
               onChange={handleCascoChange}
               placeholder="Введите номер КАСКО"
+              maxLength="20"
               className="form-input"
             />
+            <div className="input-hint">Произвольная строка до 20 символов</div>
           </div>
           
           <div className="form-actions">
