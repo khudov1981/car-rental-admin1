@@ -6,7 +6,7 @@ import './index.css'
 // Инициализация Telegram Web API
 if (window.Telegram) {
   window.Telegram.WebApp.ready();
-  window.Telegram.WebApp.expand();
+  // Убран expand() чтобы приложение не растягивалось на всю ширину экрана
 }
 
 ReactDOM.createRoot(document.getElementById('root')).render(
