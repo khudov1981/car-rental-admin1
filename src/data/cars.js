@@ -98,7 +98,7 @@ export const carsData = [
   }
 ]
 
-export const addCar = (car) => {
+export const addCar = (car, currentCars) => {
   const newCar = {
     ...car,
     id: Date.now(),
@@ -117,44 +117,36 @@ export const addCar = (car) => {
     casco: car.casco || '',
     photos: car.photos || []
   }
-  carsData.unshift(newCar) // Добавляем в начало массива
-  return newCar
+  // Возвращаем новый массив с новым автомобилем в начале
+  return [newCar, ...currentCars]
 }
 
-export const updateCar = (id, updatedCar) => {
-  const index = carsData.findIndex(car => car.id === id)
-  if (index !== -1) {
-    carsData[index] = { ...carsData[index], ...updatedCar }
-    return carsData[index]
-  }
-  return null
+export const updateCar = (id, updatedCar, currentCars) => {
+  return currentCars.map(car => car.id === id ? { ...car, ...updatedCar } : car)
 }
 
-export const deleteCar = (id) => {
-  const index = carsData.findIndex(car => car.id === id)
-  if (index !== -1) {
-    // Вместо удаления помечаем как удаленный
-    carsData[index].deleted = true
-    carsData[index].deletedAt = new Date().toISOString()
-    return carsData[index]
-  }
-  return null
+export const deleteCar = (id, currentCars) => {
+  return currentCars.map(car => {
+    if (car.id === id) {
+      return { ...car, deleted: true, deletedAt: new Date().toISOString() }
+    }
+    return car
+  })
 }
 
-export const restoreCar = (id) => {
-  const index = carsData.findIndex(car => car.id === id)
-  if (index !== -1) {
-    carsData[index].deleted = false
-    carsData[index].deletedAt = null
-    return carsData[index]
-  }
-  return null
+export const restoreCar = (id, currentCars) => {
+  return currentCars.map(car => {
+    if (car.id === id) {
+      return { ...car, deleted: false, deletedAt: null }
+    }
+    return car
+  })
 }
 
-export const getDeletedCars = () => {
-  return carsData.filter(car => car.deleted)
+export const getDeletedCars = (currentCars) => {
+  return currentCars.filter(car => car.deleted)
 }
 
-export const getActiveCars = () => {
-  return carsData.filter(car => !car.deleted)
+export const getActiveCars = (currentCars) => {
+  return currentCars.filter(car => !car.deleted)
 }

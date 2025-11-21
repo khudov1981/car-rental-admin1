@@ -34,17 +34,14 @@ function App() {
   }, [])
 
   const handleAddCar = (carData) => {
-    const newCar = addCar(carData)
-    // Обновляем состояние, добавляя новый автомобиль в начало массива
-    setCars([newCar, ...cars])
+    const newCars = addCar(carData, cars)
+    setCars(newCars)
     setShowAddForm(false)
   }
 
   const handleUpdateCar = (id, carData) => {
-    const updatedCar = updateCar(id, carData)
-    if (updatedCar) {
-      setCars(cars.map(car => car.id === id ? updatedCar : car))
-    }
+    const newCars = updateCar(id, carData, cars)
+    setCars(newCars)
     setEditingCar(null)
   }
 
@@ -58,19 +55,15 @@ function App() {
 
   const confirmDeleteCar = () => {
     if (carToDelete) {
-      const deletedCar = deleteCar(carToDelete.id)
-      if (deletedCar) {
-        setCars(cars.map(car => car.id === carToDelete.id ? deletedCar : car))
-      }
+      const newCars = deleteCar(carToDelete.id, cars)
+      setCars(newCars)
       setCarToDelete(null)
     }
   }
 
   const handleRestoreCar = (id) => {
-    const restoredCar = restoreCar(id)
-    if (restoredCar) {
-      setCars(cars.map(car => car.id === id ? restoredCar : car))
-    }
+    const newCars = restoreCar(id, cars)
+    setCars(newCars)
   }
 
   const handleEditCar = (car) => {
@@ -96,9 +89,9 @@ function App() {
 
   const getDisplayedCars = () => {
     if (showDeleted) {
-      return getDeletedCars()
+      return getDeletedCars(cars)
     } else {
-      return getActiveCars()
+      return getActiveCars(cars)
     }
   }
 
