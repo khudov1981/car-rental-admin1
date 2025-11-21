@@ -1,10 +1,40 @@
 import React, { useState } from 'react'
 import './EditCarForm.css'
+import { getCarInfoByPlate } from '../data/plateVinDatabase'
 
 const AddCarForm = ({ onAdd, onCancel }) => {
   const [plate, setPlate] = useState('')
   const [pricePerDay, setPricePerDay] = useState('')
   const [photos, setPhotos] = useState(Array(5).fill(null)) // Заглушка для 5 фото
+  const [carInfo, setCarInfo] = useState(null) // Информация об автомобиле из базы данных
+  const [loading, setLoading] = useState(false) // Состояние загрузки
+  const [error, setError] = useState('') // Ошибка при поиске автомобиля
+
+  // Функция для поиска автомобиля по госномеру
+  const searchCarByPlate = () => {
+    if (!plate) {
+      setError('Пожалуйста, введите госномер')
+      return
+    }
+    
+    setLoading(true)
+    setError('')
+    
+    // Имитируем задержку для лучшего UX
+    setTimeout(() => {
+      const result = getCarInfoByPlate(plate.toUpperCase())
+      
+      if (result.success) {
+        setCarInfo(result.data)
+        setError('')
+      } else {
+        setCarInfo(null)
+        setError(result.message)
+      }
+      
+      setLoading(false)
+    }, 500)
+  }
 
   const handleSubmit = (e) => {
     e.preventDefault()
@@ -20,9 +50,26 @@ const AddCarForm = ({ onAdd, onCancel }) => {
       return
     }
     
+    // Если информация об автомобиле найдена, используем её
     const newCar = {
       plate: plate.toUpperCase(),
       pricePerDay: parseInt(pricePerDay),
+      // Если есть информация об автомобиле, добавляем её
+      ...(carInfo ? {
+        brand: carInfo.brand,
+        model: carInfo.model,
+        year: carInfo.year,
+        color: carInfo.color,
+        transmission: carInfo.transmission,
+        vin: carInfo.vin
+      } : {
+        // Если нет информации, используем заглушки
+        brand: 'Не указано',
+        model: 'Не указано',
+        year: new Date().getFullYear(),
+        color: 'Не указан',
+        transmission: 'automatic'
+      }),
       // Добавляем заглушку для фото
       photos: photos.map((_, index) => `https://images.unsplash.com/photo-${index + 1}?w=300&h=200&fit=crop`)
     }
@@ -40,6 +87,9 @@ const AddCarForm = ({ onAdd, onCancel }) => {
     }
     
     setPlate(value)
+    // Очищаем информацию об автомобиле при изменении госномера
+    setCarInfo(null)
+    setError('')
   }
 
   const handlePriceChange = (e) => {
@@ -99,18 +149,50 @@ const AddCarForm = ({ onAdd, onCancel }) => {
         <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label htmlFor="plate">Государственный номер *:</label>
-            <input
-              type="text"
-              id="plate"
-              value={formatPlateDisplay(plate)}
-              onChange={handlePlateChange}
-              placeholder="Введите госномер"
-              maxLength="9"
-              className="form-input"
-              autoFocus
-            />
+            <div style={{ display: 'flex', gap: '10px' }}>
+              <input
+                type="text"
+                id="plate"
+                value={formatPlateDisplay(plate)}
+                onChange={handlePlateChange}
+                placeholder="Введите госномер"
+                maxLength="9"
+                className="form-input"
+                autoFocus
+                style={{ flex: 1 }}
+              />
+              <button 
+                type="button" 
+                onClick={searchCarByPlate}
+                disabled={loading || !plate}
+                className="tg-button"
+                style={{ whiteSpace: 'nowrap' }}
+              >
+                {loading ? 'Поиск...' : 'Найти авто'}
+              </button>
+            </div>
             <div className="input-hint">Формат: X000XX000</div>
+            {error && (
+              <div style={{ color: 'red', fontSize: '0.8rem', marginTop: '5px' }}>
+                {error}
+              </div>
+            )}
           </div>
+          
+          {/* Отображаем информацию об автомобиле, если она найдена */}
+          {carInfo && (
+            <div className="form-group" style={{ backgroundColor: '#f0f8ff', padding: '15px', borderRadius: '8px' }}>
+              <h4 style={{ margin: '0 0 10px 0', color: '#333' }}>Найден автомобиль:</h4>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+                <div><strong>Марка:</strong> {carInfo.brand}</div>
+                <div><strong>Модель:</strong> {carInfo.model}</div>
+                <div><strong>Год:</strong> {carInfo.year}</div>
+                <div><strong>Цвет:</strong> {carInfo.color}</div>
+                <div><strong>КПП:</strong> {carInfo.transmission === 'automatic' ? 'Автоматическая' : 'Механическая'}</div>
+                <div><strong>VIN:</strong> {carInfo.vin}</div>
+              </div>
+            </div>
+          )}
           
           <div className="form-group">
             <label htmlFor="pricePerDay">Стоимость за сутки (руб.) *:</label>
@@ -137,7 +219,11 @@ const AddCarForm = ({ onAdd, onCancel }) => {
             <button type="button" className="cancel-button" onClick={onCancel}>
               Отмена
             </button>
-            <button type="submit" className="save-button">
+            <button 
+              type="submit" 
+              className="save-button"
+              disabled={!plate || !pricePerDay || parseInt(pricePerDay) <= 0}
+            >
               Добавить
             </button>
           </div>
