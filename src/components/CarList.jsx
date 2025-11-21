@@ -1,11 +1,11 @@
 import React, { useState, useMemo } from 'react'
 import CarCard from './CarCard'
 import CarSearch from './CarSearch'
-import './CarList.css'
 
 const CarList = ({ cars, onEdit, onDelete }) => {
   const [searchTerm, setSearchTerm] = useState('')
   const [filters, setFilters] = useState({ status: 'all', brand: 'all' })
+  const [sortBy, setSortBy] = useState('brand')
 
   // Получаем уникальные марки для фильтра
   const uniqueBrands = useMemo(() => {
@@ -13,9 +13,29 @@ const CarList = ({ cars, onEdit, onDelete }) => {
     return brands
   }, [cars])
 
+  // Сортировка автомобилей
+  const sortedCars = useMemo(() => {
+    const sorted = [...cars].sort((a, b) => {
+      switch (sortBy) {
+        case 'priceAsc':
+          return a.pricePerDay - b.pricePerDay
+        case 'priceDesc':
+          return b.pricePerDay - a.pricePerDay
+        case 'yearDesc':
+          return b.year - a.year
+        case 'yearAsc':
+          return a.year - b.year
+        case 'brand':
+        default:
+          return a.brand.localeCompare(b.brand) || a.model.localeCompare(b.model)
+      }
+    })
+    return sorted
+  }, [cars, sortBy])
+
   // Фильтрация и поиск
   const filteredCars = useMemo(() => {
-    return cars.filter(car => {
+    return sortedCars.filter(car => {
       // Поиск по тексту
       const matchesSearch = !searchTerm || 
         car.brand.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -30,7 +50,7 @@ const CarList = ({ cars, onEdit, onDelete }) => {
       
       return matchesSearch && matchesStatus && matchesBrand
     })
-  }, [cars, searchTerm, filters])
+  }, [sortedCars, searchTerm, filters])
 
   const handleSearch = (term) => {
     setSearchTerm(term)
@@ -40,32 +60,86 @@ const CarList = ({ cars, onEdit, onDelete }) => {
     setFilters(newFilters)
   }
 
+  const handleSort = (sort) => {
+    setSortBy(sort)
+  }
+
   if (!cars || cars.length === 0) {
     return (
-      <div className="empty-state">
-        <div className="empty-icon">🚗</div>
-        <h3>Нет автомобилей</h3>
-        <p>Добавьте первый автомобиль, чтобы начать</p>
+      <div style={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '40px 20px',
+        textAlign: 'center',
+        color: 'var(--tg-theme-hint-color, #999999)'
+      }}>
+        <div style={{
+          fontSize: '3rem',
+          marginBottom: '16px',
+          opacity: '0.3'
+        }}>🚗</div>
+        <h3 style={{
+          margin: '0 0 8px 0',
+          color: 'var(--tg-theme-text-color, #000000)',
+          fontSize: '1.2rem'
+        }}>Нет автомобилей</h3>
+        <p style={{
+          margin: '0',
+          fontSize: '0.9rem'
+        }}>Добавьте первый автомобиль, чтобы начать</p>
       </div>
     )
   }
 
   return (
-    <div className="car-list-container">
+    <div style={{
+      width: '100%'
+    }}>
       <CarSearch 
         onSearch={handleSearch}
         onFilter={handleFilter}
+        onSort={handleSort}
       />
       
       {filteredCars.length === 0 ? (
-        <div className="empty-state">
-          <div className="empty-icon">🔍</div>
-          <h3>Автомобили не найдены</h3>
-          <p>Попробуйте изменить параметры поиска или фильтры</p>
+        <div style={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: '40px 20px',
+          textAlign: 'center',
+          color: 'var(--tg-theme-hint-color, #999999)'
+        }}>
+          <div style={{
+            fontSize: '3rem',
+            marginBottom: '16px',
+            opacity: '0.3'
+          }}>🔍</div>
+          <h3 style={{
+            margin: '0 0 8px 0',
+            color: 'var(--tg-theme-text-color, #000000)',
+            fontSize: '1.2rem'
+          }}>Автомобили не найдены</h3>
+          <p style={{
+            margin: '0',
+            fontSize: '0.9rem'
+          }}>Попробуйте изменить параметры поиска или фильтры</p>
         </div>
       ) : (
-        <div className="car-list">
-          <div className="results-info">
+        <div style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '16px'
+        }}>
+          <div style={{
+            padding: '8px 0',
+            fontSize: '0.9rem',
+            color: 'var(--tg-theme-hint-color, #666666)',
+            textAlign: 'center'
+          }}>
             Найдено: {filteredCars.length} из {cars.length}
           </div>
           {filteredCars.map(car => (

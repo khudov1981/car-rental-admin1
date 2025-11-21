@@ -1,10 +1,11 @@
 import React, { useState } from 'react'
 import './CarSearch.css'
 
-const CarSearch = ({ onSearch, onFilter }) => {
+const CarSearch = ({ onSearch, onFilter, onSort }) => {
   const [searchTerm, setSearchTerm] = useState('')
   const [statusFilter, setStatusFilter] = useState('all')
   const [brandFilter, setBrandFilter] = useState('all')
+  const [sortBy, setSortBy] = useState('brand')
 
   const handleSearch = (e) => {
     e.preventDefault()
@@ -23,12 +24,20 @@ const CarSearch = ({ onSearch, onFilter }) => {
     onFilter({ status: statusFilter, brand })
   }
 
+  const handleSortChange = (e) => {
+    const sort = e.target.value
+    setSortBy(sort)
+    onSort(sort)
+  }
+
   const clearFilters = () => {
     setSearchTerm('')
     setStatusFilter('all')
     setBrandFilter('all')
+    setSortBy('brand')
     onSearch('')
     onFilter({ status: 'all', brand: 'all' })
+    onSort('brand')
   }
 
   return (
@@ -74,12 +83,24 @@ const CarSearch = ({ onSearch, onFilter }) => {
           <option value="Nissan">Nissan</option>
         </select>
 
-        {(searchTerm || statusFilter !== 'all' || brandFilter !== 'all') && (
+        <select 
+          value={sortBy} 
+          onChange={handleSortChange}
+          className="filter-select"
+        >
+          <option value="brand">Сортировка по марке</option>
+          <option value="priceAsc">Цена по возрастанию</option>
+          <option value="priceDesc">Цена по убыванию</option>
+          <option value="yearDesc">Год (новые первые)</option>
+          <option value="yearAsc">Год (старые первые)</option>
+        </select>
+
+        {(searchTerm || statusFilter !== 'all' || brandFilter !== 'all' || sortBy !== 'brand') && (
           <button 
             onClick={clearFilters}
             className="clear-filters-button"
           >
-            Сбросить фильтры
+            Сбросить
           </button>
         )}
       </div>
