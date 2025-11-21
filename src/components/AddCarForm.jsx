@@ -3,6 +3,7 @@ import './EditCarForm.css'
 
 const AddCarForm = ({ onAdd, onCancel }) => {
   const [plate, setPlate] = useState('')
+  const [pricePerDay, setPricePerDay] = useState('')
   const [photos, setPhotos] = useState(Array(5).fill(null)) // Заглушка для 5 фото
 
   const handleSubmit = (e) => {
@@ -14,8 +15,14 @@ const AddCarForm = ({ onAdd, onCancel }) => {
       return
     }
     
+    if (!pricePerDay || parseInt(pricePerDay) <= 0) {
+      alert('Пожалуйста, введите корректную стоимость за сутки')
+      return
+    }
+    
     const newCar = {
       plate: plate.toUpperCase(),
+      pricePerDay: parseInt(pricePerDay),
       // Добавляем заглушку для фото
       photos: photos.map((_, index) => `https://images.unsplash.com/photo-${index + 1}?w=300&h=200&fit=crop`)
     }
@@ -33,6 +40,12 @@ const AddCarForm = ({ onAdd, onCancel }) => {
     }
     
     setPlate(value)
+  }
+
+  const handlePriceChange = (e) => {
+    // Разрешаем только цифры
+    const value = e.target.value.replace(/[^0-9]/g, '')
+    setPricePerDay(value)
   }
 
   // Форматирование отображаемого значения госномера
@@ -97,6 +110,19 @@ const AddCarForm = ({ onAdd, onCancel }) => {
               autoFocus
             />
             <div className="input-hint">Формат: X000XX000</div>
+          </div>
+          
+          <div className="form-group">
+            <label htmlFor="pricePerDay">Стоимость за сутки (руб.) *:</label>
+            <input
+              type="text"
+              id="pricePerDay"
+              value={pricePerDay}
+              onChange={handlePriceChange}
+              placeholder="Введите стоимость"
+              className="form-input"
+            />
+            <div className="input-hint">Только цифры</div>
           </div>
           
           <div className="form-group">
