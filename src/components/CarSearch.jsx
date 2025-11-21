@@ -5,7 +5,7 @@ const CarSearch = ({ onSearch, onFilter, onSort }) => {
   const [searchTerm, setSearchTerm] = useState('')
   const [statusFilter, setStatusFilter] = useState('all')
   const [brandFilter, setBrandFilter] = useState('all')
-  const [sortBy, setSortBy] = useState('brand')
+  const [sortBy, setSortBy] = useState('priceAsc')
   const [showFilters, setShowFilters] = useState(false)
 
   const handleSearch = (e) => {
@@ -35,10 +35,10 @@ const CarSearch = ({ onSearch, onFilter, onSort }) => {
     setSearchTerm('')
     setStatusFilter('all')
     setBrandFilter('all')
-    setSortBy('brand')
+    setSortBy('priceAsc')
     onSearch('')
     onFilter({ status: 'all', brand: 'all' })
-    onSort('brand')
+    onSort('priceAsc')
   }
 
   const toggleFilters = () => {
@@ -103,12 +103,11 @@ const CarSearch = ({ onSearch, onFilter, onSort }) => {
             onChange={handleSortChange}
             className="filter-select"
           >
-            <option value="brand">Сортировка по марке</option>
             <option value="priceAsc">Цена по возрастанию</option>
             <option value="priceDesc">Цена по убыванию</option>
           </select>
 
-          {(searchTerm || statusFilter !== 'all' || brandFilter !== 'all' || sortBy !== 'brand') && (
+          {(searchTerm || statusFilter !== 'all' || brandFilter !== 'all' || sortBy !== 'priceAsc') && (
             <button 
               onClick={clearFilters}
               className="clear-filters-button"
