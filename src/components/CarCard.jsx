@@ -143,6 +143,19 @@ const CarCard = ({ car, onEdit, onDelete, onRestore, showDeleted }) => {
       {/* Раскрытый вид с дополнительной информацией */}
       {isExpanded && !showDeleted && (
         <div className="car-details-expanded">
+          {/* Фотографии автомобиля */}
+          {car.photos && car.photos.length > 0 && (
+            <div className="car-photos">
+              <div className="photos-grid">
+                {car.photos.slice(0, 3).map((photo, index) => (
+                  <div key={index} className="photo-thumbnail">
+                    <img src={photo} alt={`Фото ${index + 1}`} />
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+          
           <div className="car-detail-row">
             <span className="detail-label">Год:</span>
             <span className="detail-value">{car.year}</span>
