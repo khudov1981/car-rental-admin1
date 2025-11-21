@@ -5,6 +5,8 @@ const EditCarForm = ({ car, onSave, onCancel }) => {
   const [plate, setPlate] = useState(car.plate)
   const [insurance, setInsurance] = useState(car.insurance || '')
   const [casco, setCasco] = useState(car.casco || '')
+  const [price, setPrice] = useState(car.price || '')
+  const [photo, setPhoto] = useState(car.photo || '')
 
   const handleSubmit = (e) => {
     e.preventDefault()
@@ -12,7 +14,9 @@ const EditCarForm = ({ car, onSave, onCancel }) => {
       ...car, 
       plate: plate.toUpperCase(),
       insurance: insurance.toUpperCase(),
-      casco: casco.toUpperCase()
+      casco: casco.toUpperCase(),
+      price: price,
+      photo: photo
     })
   }
 
@@ -50,6 +54,30 @@ const EditCarForm = ({ car, onSave, onCancel }) => {
     }
     
     setCasco(value)
+  }
+
+  const handlePriceChange = (e) => {
+    // Цена: только цифры и точка для десятичных значений
+    let value = e.target.value.replace(/[^0-9.]/g, '')
+    
+    // Ограничиваем длину до 10 символов
+    if (value.length > 10) {
+      value = value.substring(0, 10)
+    }
+    
+    setPrice(value)
+  }
+
+  const handlePhotoChange = (e) => {
+    // URL фото: произвольная строка до 200 символов
+    let value = e.target.value
+    
+    // Ограничиваем длину до 200 символов
+    if (value.length > 200) {
+      value = value.substring(0, 200)
+    }
+    
+    setPhoto(value)
   }
 
   // Форматирование отображаемого значения госномера
@@ -148,6 +176,34 @@ const EditCarForm = ({ car, onSave, onCancel }) => {
               className="form-input"
             />
             <div className="input-hint">Произвольная строка до 20 символов</div>
+          </div>
+          
+          <div className="form-group">
+            <label htmlFor="price">Цена аренды (в день):</label>
+            <input
+              type="text"
+              id="price"
+              value={price}
+              onChange={handlePriceChange}
+              placeholder="Введите цену"
+              maxLength="10"
+              className="form-input"
+            />
+            <div className="input-hint">Только цифры и точка для десятичных значений</div>
+          </div>
+          
+          <div className="form-group">
+            <label htmlFor="photo">URL фото автомобиля:</label>
+            <input
+              type="text"
+              id="photo"
+              value={photo}
+              onChange={handlePhotoChange}
+              placeholder="Введите URL фото"
+              maxLength="200"
+              className="form-input"
+            />
+            <div className="input-hint">Произвольная строка до 200 символов</div>
           </div>
           
           <div className="form-actions">
