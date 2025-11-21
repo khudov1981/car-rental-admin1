@@ -91,8 +91,6 @@ const CarSearch = ({ onSearch, onFilter, onSort }) => {
           <option value="brand">Сортировка по марке</option>
           <option value="priceAsc">Цена по возрастанию</option>
           <option value="priceDesc">Цена по убыванию</option>
-          <option value="yearDesc">Год (новые первые)</option>
-          <option value="yearAsc">Год (старые первые)</option>
         </select>
 
         {(searchTerm || statusFilter !== 'all' || brandFilter !== 'all' || sortBy !== 'brand') && (
