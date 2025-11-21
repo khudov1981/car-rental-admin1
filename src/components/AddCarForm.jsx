@@ -140,7 +140,11 @@ const AddCarForm = ({ onAdd, onCancel }) => {
 
   // Проверка валидности формы
   const isFormValid = () => {
-    return plate && carInfo && pricePerDay && parseInt(pricePerDay) > 0
+    // Форма валидна только если:
+    // 1. Введен госномер
+    // 2. Найдена информация об автомобиле
+    // 3. Введена корректная цена
+    return plate.trim().length > 0 && carInfo !== null && pricePerDay.trim().length > 0 && parseInt(pricePerDay) > 0
   }
 
   // Проверка валидности стоимости
