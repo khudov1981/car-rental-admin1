@@ -9,7 +9,7 @@ export const carsData = [
     plate: 'A123BC',
     status: 'available',
     pricePerDay: 2500,
-    image: 'https://images.unsplash.com/photo-1542362567-b20d4ce58b84?w=200'
+    image: 'https://source.unsplash.com/300x200/?car,toyota'
   },
   {
     id: 2,
@@ -20,7 +20,7 @@ export const carsData = [
     plate: 'B456CD',
     status: 'rented',
     pricePerDay: 4500,
-    image: 'https://images.unsplash.com/photo-1549399542-7e7f0c3c4b4c?w=200'
+    image: 'https://source.unsplash.com/300x200/?car,bmw'
   },
   {
     id: 3,
@@ -31,7 +31,7 @@ export const carsData = [
     plate: 'C789EF',
     status: 'available',
     pricePerDay: 3500,
-    image: 'https://images.unsplash.com/photo-1542362567-b20d4ce58b84?w=200'
+    image: 'https://source.unsplash.com/300x200/?car,mercedes'
   }
 ]
 

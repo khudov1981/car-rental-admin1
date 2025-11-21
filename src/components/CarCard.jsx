@@ -1,7 +1,9 @@
-import React from 'react'
+import React, { useState } from 'react'
 import './CarCard.css'
 
 const CarCard = ({ car, onEdit, onDelete }) => {
+  const [imageError, setImageError] = useState(false)
+
   const getStatusText = (status) => {
     switch (status) {
       case 'available': return 'Доступен'
@@ -20,10 +22,24 @@ const CarCard = ({ car, onEdit, onDelete }) => {
     }
   }
 
+  const handleImageError = () => {
+    setImageError(true)
+  }
+
   return (
     <div className="car-card">
       <div className="car-image">
-        <img src={car.image} alt={`${car.brand} ${car.model}`} />
+        {imageError ? (
+          <div className="image-placeholder">
+            <div className="placeholder-icon">🚗</div>
+          </div>
+        ) : (
+          <img 
+            src={car.image} 
+            alt={`${car.brand} ${car.model}`}
+            onError={handleImageError}
+          />
+        )}
       </div>
       
       <div className="car-info">
