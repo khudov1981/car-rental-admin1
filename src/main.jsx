@@ -6,6 +6,8 @@ import './index.css'
 // Инициализация Telegram Web API
 if (window.Telegram) {
   window.Telegram.WebApp.ready();
+  // Отключаем возможность закрытия приложения свайпом вниз
+  window.Telegram.WebApp.disableVerticalSwipes();
   // Убран expand() чтобы приложение не растягивалось на всю ширину экрана
 }
 
