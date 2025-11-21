@@ -138,6 +138,11 @@ const AddCarForm = ({ onAdd, onCancel }) => {
     )
   }
 
+  // Проверка валидности формы
+  const isFormValid = () => {
+    return plate && pricePerDay && parseInt(pricePerDay) > 0
+  }
+
   return (
     <div className="edit-car-form-overlay">
       <div className="edit-car-form">
@@ -203,8 +208,16 @@ const AddCarForm = ({ onAdd, onCancel }) => {
               onChange={handlePriceChange}
               placeholder="Введите стоимость"
               className="form-input"
+              style={{
+                borderColor: (!pricePerDay || parseInt(pricePerDay) <= 0) && pricePerDay !== '' ? 'red' : ''
+              }}
             />
             <div className="input-hint">Только цифры</div>
+            {(!pricePerDay || parseInt(pricePerDay) <= 0) && pricePerDay !== '' && (
+              <div style={{ color: 'red', fontSize: '0.8rem', marginTop: '5px' }}>
+                Пожалуйста, введите корректную стоимость
+              </div>
+            )}
           </div>
           
           <div className="form-group">
@@ -222,7 +235,7 @@ const AddCarForm = ({ onAdd, onCancel }) => {
             <button 
               type="submit" 
               className="save-button"
-              disabled={!plate || !pricePerDay || parseInt(pricePerDay) <= 0}
+              disabled={!isFormValid()}
             >
               Добавить
             </button>
