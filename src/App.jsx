@@ -3,6 +3,7 @@ import './App.css'
 import Navigation from './components/Navigation'
 import CarList from './components/CarList'
 import ConfirmModal from './components/ConfirmModal'
+import EditCarForm from './components/EditCarForm'
 import { carsData, addCar, updateCar, deleteCar, restoreCar, getActiveCars, getDeletedCars } from './data/cars'
 
 function App() {
@@ -74,8 +75,17 @@ function App() {
     setEditingCar(car)
   }
 
+  const handleSaveEditCar = (updatedCar) => {
+    handleUpdateCar(updatedCar.id, updatedCar)
+  }
+
+  const handleCancelEdit = () => {
+    setEditingCar(null)
+  }
+
   const toggleDeletedView = () => {
     setShowDeleted(!showDeleted)
+    setEditingCar(null) // Закрываем форму редактирования при переключении вида
   }
 
   const getDisplayedCars = () => {
@@ -146,6 +156,14 @@ function App() {
       </main>
       
       <Navigation activePage={activePage} setActivePage={setActivePage} />
+      
+      {editingCar && (
+        <EditCarForm
+          car={editingCar}
+          onSave={handleSaveEditCar}
+          onCancel={handleCancelEdit}
+        />
+      )}
       
       <ConfirmModal
         isOpen={showDeleteModal}
