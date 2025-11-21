@@ -1,15 +1,8 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import './CarCard.css'
 
 const CarCard = ({ car, onEdit, onDelete }) => {
-  const [imageLoaded, setImageLoaded] = useState(false)
-  const [imageError, setImageError] = useState(false)
-
-  useEffect(() => {
-    // Сброс состояния при изменении автомобиля
-    setImageLoaded(false)
-    setImageError(false)
-  }, [car.id])
+  const [isExpanded, setIsExpanded] = useState(false)
 
   const getStatusText = (status) => {
     switch (status) {
@@ -29,62 +22,50 @@ const CarCard = ({ car, onEdit, onDelete }) => {
     }
   }
 
-  const handleImageLoad = () => {
-    setImageLoaded(true)
-  }
-
-  const handleImageError = () => {
-    setImageError(true)
+  const toggleExpand = () => {
+    setIsExpanded(!isExpanded)
   }
 
   return (
     <div className="car-card">
-      <div className="car-image">
-        {!imageLoaded && !imageError && (
-          <div className="image-placeholder">
-            <div className="placeholder-icon">🚗</div>
-          </div>
-        )}
-        
-        {imageError ? (
-          <div className="image-placeholder">
-            <div className="placeholder-icon">🚗</div>
-          </div>
-        ) : (
-          <img 
-            src={car.image} 
-            alt={`${car.brand} ${car.model}`}
-            onLoad={handleImageLoad}
-            onError={handleImageError}
-            style={{ display: imageLoaded ? 'block' : 'none' }}
-          />
-        )}
-      </div>
-      
-      <div className="car-info">
-        <div className="car-header">
-          <h3>{car.brand} {car.model}</h3>
+      {/* Компактный вид */}
+      <div className="car-summary" onClick={toggleExpand}>
+        <div className="car-basic-info">
+          <h3 className="car-title">{car.brand} {car.model}</h3>
+          <div className="car-plate">{car.plate}</div>
+        </div>
+        <div className="car-meta">
           <span className={`status-badge ${getStatusClass(car.status)}`}>
             {getStatusText(car.status)}
           </span>
+          <div className="car-price">{car.pricePerDay} руб/день</div>
         </div>
-        
-        <div className="car-details">
-          <p><strong>Год:</strong> {car.year}</p>
-          <p><strong>Цвет:</strong> {car.color}</p>
-          <p><strong>Номер:</strong> {car.plate}</p>
-          <p><strong>Цена/день:</strong> {car.pricePerDay} руб.</p>
-        </div>
-        
-        <div className="car-actions">
-          <button className="edit-button" onClick={() => onEdit(car)}>
-            Редактировать
-          </button>
-          <button className="delete-button" onClick={() => onDelete(car.id)}>
-            Удалить
-          </button>
+        <div className="expand-icon">
+          {isExpanded ? '▲' : '▼'}
         </div>
       </div>
+
+      {/* Раскрытый вид с дополнительной информацией */}
+      {isExpanded && (
+        <div className="car-details-expanded">
+          <div className="car-detail-row">
+            <span className="detail-label">Год:</span>
+            <span className="detail-value">{car.year}</span>
+          </div>
+          <div className="car-detail-row">
+            <span className="detail-label">Цвет:</span>
+            <span className="detail-value">{car.color}</span>
+          </div>
+          <div className="car-actions-expanded">
+            <button className="edit-button" onClick={() => onEdit(car)}>
+              Редактировать
+            </button>
+            <button className="delete-button" onClick={() => onDelete(car.id)}>
+              Удалить
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
