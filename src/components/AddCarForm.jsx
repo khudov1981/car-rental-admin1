@@ -1,19 +1,28 @@
 import React, { useState } from 'react'
 import './EditCarForm.css'
 import { getCarInfoByPlate } from '../data/plateVinDatabase'
+import { checkCarExists } from '../data/cars'
 
-const AddCarForm = ({ onAdd, onCancel }) => {
+const AddCarForm = ({ onAdd, onCancel, cars }) => {
   const [plate, setPlate] = useState('')
   const [pricePerDay, setPricePerDay] = useState('')
   const [photos, setPhotos] = useState(Array(5).fill(null)) // Заглушка для 5 фото
   const [carInfo, setCarInfo] = useState(null) // Информация об автомобиле из базы данных
   const [loading, setLoading] = useState(false) // Состояние загрузки
   const [error, setError] = useState('') // Ошибка при поиске автомобиля
+  const [carExistsError, setCarExistsError] = useState('') // Ошибка существования автомобиля
 
   // Функция для поиска автомобиля по госномеру
   const searchCarByPlate = () => {
     if (!plate) {
       setError('Пожалуйста, введите госномер')
+      return
+    }
+    
+    // Проверяем, существует ли автомобиль с таким госномером
+    if (checkCarExists(plate.toUpperCase(), cars)) {
+      setError('Автомобиль с таким госномером уже существует в базе')
+      setCarInfo(null)
       return
     }
     
@@ -27,6 +36,7 @@ const AddCarForm = ({ onAdd, onCancel }) => {
       if (result.success) {
         setCarInfo(result.data)
         setError('')
+        setCarExistsError('')
       } else {
         setCarInfo(null)
         setError(result.message)
@@ -42,6 +52,12 @@ const AddCarForm = ({ onAdd, onCancel }) => {
     // Валидация обязательных полей
     if (!plate) {
       alert('Пожалуйста, введите госномер')
+      return
+    }
+    
+    // Проверяем, существует ли автомобиль с таким госномером
+    if (checkCarExists(plate.toUpperCase(), cars)) {
+      setCarExistsError('Автомобиль с таким госномером уже существует в базе')
       return
     }
     
@@ -90,6 +106,7 @@ const AddCarForm = ({ onAdd, onCancel }) => {
     // Очищаем информацию об автомобиле при изменении госномера
     setCarInfo(null)
     setError('')
+    setCarExistsError('')
   }
 
   const handlePriceChange = (e) => {
@@ -142,9 +159,9 @@ const AddCarForm = ({ onAdd, onCancel }) => {
   const isFormValid = () => {
     // Форма валидна только если:
     // 1. Введен госномер
-    // 2. Найдена информация об автомобиле
+    // 2. Найдена информация об автомобиле или нет ошибки существования
     // 3. Введена корректная цена
-    return plate.trim().length > 0 && carInfo !== null && pricePerDay.trim().length > 0 && parseInt(pricePerDay) > 0
+    return plate.trim().length > 0 && !carExistsError && pricePerDay.trim().length > 0 && parseInt(pricePerDay) > 0
   }
 
   // Проверка валидности стоимости
@@ -189,6 +206,11 @@ const AddCarForm = ({ onAdd, onCancel }) => {
             {error && (
               <div style={{ color: 'red', fontSize: '0.8rem', marginTop: '5px' }}>
                 {error}
+              </div>
+            )}
+            {carExistsError && (
+              <div style={{ color: 'red', fontSize: '0.8rem', marginTop: '5px' }}>
+                {carExistsError}
               </div>
             )}
           </div>
