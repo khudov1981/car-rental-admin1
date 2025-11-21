@@ -143,6 +143,11 @@ const AddCarForm = ({ onAdd, onCancel }) => {
     return plate && pricePerDay && parseInt(pricePerDay) > 0
   }
 
+  // Проверка валидности стоимости
+  const isPriceValid = () => {
+    return pricePerDay && parseInt(pricePerDay) > 0
+  }
+
   return (
     <div className="edit-car-form-overlay">
       <div className="edit-car-form">
@@ -209,11 +214,11 @@ const AddCarForm = ({ onAdd, onCancel }) => {
               placeholder="Введите стоимость"
               className="form-input"
               style={{
-                borderColor: (!pricePerDay || parseInt(pricePerDay) <= 0) && pricePerDay !== '' ? 'red' : ''
+                borderColor: !isPriceValid() && pricePerDay !== '' ? 'red' : ''
               }}
             />
             <div className="input-hint">Только цифры</div>
-            {(!pricePerDay || parseInt(pricePerDay) <= 0) && pricePerDay !== '' && (
+            {!isPriceValid() && pricePerDay !== '' && (
               <div style={{ color: 'red', fontSize: '0.8rem', marginTop: '5px' }}>
                 Пожалуйста, введите корректную стоимость
               </div>
