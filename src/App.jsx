@@ -5,7 +5,7 @@ import CarList from './components/CarList'
 import ConfirmModal from './components/ConfirmModal'
 import EditCarForm from './components/EditCarForm'
 import AddCarForm from './components/AddCarForm'
-import { addCar, updateCar, deleteCar, restoreCar, getActiveCars, getDeletedCars, getCarsFromStorage } from './data/cars'
+import { addCar, updateCar, deleteCar, restoreCar, getActiveCars, getDeletedCars, getCarsFromStorage, clearCarsStorage } from './data/cars'
 
 function App() {
   const [activePage, setActivePage] = useState('cars')
@@ -93,6 +93,11 @@ function App() {
     setEditingCar(null) // Закрываем форму редактирования при переключении вида
   }
 
+  const handleClearData = () => {
+    clearCarsStorage();
+    setCars([]);
+  };
+
   const getDisplayedCars = () => {
     if (showDeleted) {
       return getDeletedCars(cars)
@@ -115,6 +120,9 @@ function App() {
             Привет, {telegramUser.first_name}!
           </div>
         )}
+        <button className="tg-button clear-data-button" onClick={handleClearData}>
+          Очистить данные
+        </button>
       </header>
       
       <main className="app-content">
