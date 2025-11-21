@@ -10,7 +10,9 @@ export const carsData = [
     status: 'available',
     pricePerDay: 2500,
     transmission: 'automatic',
-    image: 'https://images.unsplash.com/photo-1542362567-b20d4ce58b84?w=300&h=200&fit=crop'
+    image: 'https://images.unsplash.com/photo-1542362567-b20d4ce58b84?w=300&h=200&fit=crop',
+    deleted: false,
+    deletedAt: null
   },
   {
     id: 2,
@@ -22,7 +24,9 @@ export const carsData = [
     status: 'rented',
     pricePerDay: 4500,
     transmission: 'automatic',
-    image: 'https://images.unsplash.com/photo-1549399542-7e7f0c3c4b4c?w=300&h=200&fit=crop'
+    image: 'https://images.unsplash.com/photo-1549399542-7e7f0c3c4b4c?w=300&h=200&fit=crop',
+    deleted: false,
+    deletedAt: null
   },
   {
     id: 3,
@@ -34,7 +38,9 @@ export const carsData = [
     status: 'available',
     pricePerDay: 3500,
     transmission: 'automatic',
-    image: 'https://images.unsplash.com/photo-1534303699193-4e354c4c4d4a?w=300&h=200&fit=crop'
+    image: 'https://images.unsplash.com/photo-1534303699193-4e354c4c4d4a?w=300&h=200&fit=crop',
+    deleted: false,
+    deletedAt: null
   },
   {
     id: 4,
@@ -46,7 +52,9 @@ export const carsData = [
     status: 'available',
     pricePerDay: 4000,
     transmission: 'automatic',
-    image: 'https://images.unsplash.com/photo-1568605162577-7b94d3dc1d1b?w=300&h=200&fit=crop'
+    image: 'https://images.unsplash.com/photo-1568605162577-7b94d3dc1d1b?w=300&h=200&fit=crop',
+    deleted: false,
+    deletedAt: null
   },
   {
     id: 5,
@@ -58,7 +66,9 @@ export const carsData = [
     status: 'maintenance',
     pricePerDay: 2000,
     transmission: 'manual',
-    image: 'https://images.unsplash.com/photo-1542362567-b20d4ce58b84?w=300&h=200&fit=crop'
+    image: 'https://images.unsplash.com/photo-1542362567-b20d4ce58b84?w=300&h=200&fit=crop',
+    deleted: false,
+    deletedAt: null
   },
   {
     id: 6,
@@ -70,7 +80,9 @@ export const carsData = [
     status: 'available',
     pricePerDay: 3000,
     transmission: 'automatic',
-    image: 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=300&h=200&fit=crop'
+    image: 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=300&h=200&fit=crop',
+    deleted: false,
+    deletedAt: null
   }
 ]
 
@@ -78,7 +90,9 @@ export const addCar = (car) => {
   const newCar = {
     ...car,
     id: Date.now(),
-    status: 'available'
+    status: 'available',
+    deleted: false,
+    deletedAt: null
   }
   carsData.push(newCar)
   return newCar
@@ -96,7 +110,28 @@ export const updateCar = (id, updatedCar) => {
 export const deleteCar = (id) => {
   const index = carsData.findIndex(car => car.id === id)
   if (index !== -1) {
-    return carsData.splice(index, 1)[0]
+    // Вместо удаления помечаем как удаленный
+    carsData[index].deleted = true
+    carsData[index].deletedAt = new Date().toISOString()
+    return carsData[index]
   }
   return null
+}
+
+export const restoreCar = (id) => {
+  const index = carsData.findIndex(car => car.id === id)
+  if (index !== -1) {
+    carsData[index].deleted = false
+    carsData[index].deletedAt = null
+    return carsData[index]
+  }
+  return null
+}
+
+export const getDeletedCars = () => {
+  return carsData.filter(car => car.deleted)
+}
+
+export const getActiveCars = () => {
+  return carsData.filter(car => !car.deleted)
 }

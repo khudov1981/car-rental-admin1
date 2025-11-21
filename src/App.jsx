@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import './App.css'
 import Navigation from './components/Navigation'
 import CarList from './components/CarList'
-import { carsData, addCar, updateCar, deleteCar } from './data/cars'
+import { carsData, addCar, updateCar, deleteCar, restoreCar, getActiveCars, getDeletedCars } from './data/cars'
 
 function App() {
   const [activePage, setActivePage] = useState('cars')
@@ -10,6 +10,7 @@ function App() {
   const [cars, setCars] = useState(carsData)
   const [showAddForm, setShowAddForm] = useState(false)
   const [editingCar, setEditingCar] = useState(null)
+  const [showDeleted, setShowDeleted] = useState(false)
 
   useEffect(() => {
     // Инициализация Telegram WebApp
@@ -42,12 +43,33 @@ function App() {
   }
 
   const handleDeleteCar = (id) => {
-    deleteCar(id)
-    setCars(cars.filter(car => car.id !== id))
+    const deletedCar = deleteCar(id)
+    if (deletedCar) {
+      setCars(cars.map(car => car.id === id ? deletedCar : car))
+    }
+  }
+
+  const handleRestoreCar = (id) => {
+    const restoredCar = restoreCar(id)
+    if (restoredCar) {
+      setCars(cars.map(car => car.id === id ? restoredCar : car))
+    }
   }
 
   const handleEditCar = (car) => {
     setEditingCar(car)
+  }
+
+  const toggleDeletedView = () => {
+    setShowDeleted(!showDeleted)
+  }
+
+  const getDisplayedCars = () => {
+    if (showDeleted) {
+      return getDeletedCars()
+    } else {
+      return getActiveCars()
+    }
   }
 
   return (
@@ -65,19 +87,30 @@ function App() {
         {activePage === 'cars' && (
           <div className="page-content">
             <div className="page-header">
-              <h2>Автомобили</h2>
-              <button 
-                className="tg-button add-car-button"
-                onClick={() => setShowAddForm(true)}
-              >
-                + Добавить авто
-              </button>
+              <h2>{showDeleted ? 'Удаленные автомобили' : 'Автомобили'}</h2>
+              <div className="header-actions">
+                <button 
+                  className="tg-button add-car-button"
+                  onClick={() => setShowAddForm(true)}
+                  style={{ display: showDeleted ? 'none' : 'block' }}
+                >
+                  + Добавить авто
+                </button>
+                <button 
+                  className="tg-button toggle-deleted-button"
+                  onClick={toggleDeletedView}
+                >
+                  {showDeleted ? '← Назад к авто' : '🗑️ Удаленные авто'}
+                </button>
+              </div>
             </div>
             
             <CarList 
-              cars={cars}
+              cars={getDisplayedCars()}
               onEdit={handleEditCar}
               onDelete={handleDeleteCar}
+              onRestore={handleRestoreCar}
+              showDeleted={showDeleted}
             />
           </div>
         )}

@@ -2,7 +2,7 @@ import React, { useState, useMemo } from 'react'
 import CarCard from './CarCard'
 import CarSearch from './CarSearch'
 
-const CarList = ({ cars, onEdit, onDelete }) => {
+const CarList = ({ cars, onEdit, onDelete, onRestore, showDeleted }) => {
   const [searchTerm, setSearchTerm] = useState('')
   const [filters, setFilters] = useState({ status: 'all', brand: 'all' })
   const [sortBy, setSortBy] = useState('priceAsc')
@@ -146,11 +146,11 @@ const CarList = ({ cars, onEdit, onDelete }) => {
           margin: '0 0 8px 0',
           color: 'var(--tg-theme-text-color, #000000)',
           fontSize: '1.2rem'
-        }}>Нет автомобилей</h3>
+        }}>{showDeleted ? 'Нет удаленных автомобилей' : 'Нет автомобилей'}</h3>
         <p style={{
           margin: '0',
           fontSize: '0.9rem'
-        }}>Добавьте первый автомобиль, чтобы начать</p>
+        }}>{showDeleted ? 'Все автомобили активны' : 'Добавьте первый автомобиль, чтобы начать'}</p>
       </div>
     )
   }
@@ -159,11 +159,13 @@ const CarList = ({ cars, onEdit, onDelete }) => {
     <div style={{
       width: '100%'
     }}>
-      <CarSearch 
-        onSearch={handleSearch}
-        onFilter={handleFilter}
-        onSort={handleSort}
-      />
+      {!showDeleted && (
+        <CarSearch 
+          onSearch={handleSearch}
+          onFilter={handleFilter}
+          onSort={handleSort}
+        />
+      )}
       
       {filteredCars.length === 0 ? (
         <div style={{
@@ -184,11 +186,11 @@ const CarList = ({ cars, onEdit, onDelete }) => {
             margin: '0 0 8px 0',
             color: 'var(--tg-theme-text-color, #000000)',
             fontSize: '1.2rem'
-          }}>Автомобили не найдены</h3>
+          }}>{showDeleted ? 'Удаленные автомобили не найдены' : 'Автомобили не найдены'}</h3>
           <p style={{
             margin: '0',
             fontSize: '0.9rem'
-          }}>Попробуйте изменить параметры поиска или фильтры</p>
+          }}>{showDeleted ? 'Нет удаленных автомобилей по заданным критериям' : 'Попробуйте изменить параметры поиска или фильтры'}</p>
         </div>
       ) : (
         <div style={{
@@ -196,20 +198,24 @@ const CarList = ({ cars, onEdit, onDelete }) => {
           flexDirection: 'column',
           gap: '12px'
         }}>
-          <div style={{
-            padding: '8px 0',
-            fontSize: '0.9rem',
-            color: 'var(--tg-theme-hint-color, #666666)',
-            textAlign: 'center'
-          }}>
-            Найдено: {filteredCars.length} из {cars.length}
-          </div>
+          {!showDeleted && (
+            <div style={{
+              padding: '8px 0',
+              fontSize: '0.9rem',
+              color: 'var(--tg-theme-hint-color, #666666)',
+              textAlign: 'center'
+            }}>
+              Найдено: {filteredCars.length} из {cars.length}
+            </div>
+          )}
           {filteredCars.map(car => (
             <CarCard 
               key={car.id}
               car={car}
               onEdit={onEdit}
               onDelete={onDelete}
+              onRestore={onRestore}
+              showDeleted={showDeleted}
             />
           ))}
         </div>
