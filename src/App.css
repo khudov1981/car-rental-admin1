@@ -142,3 +142,33 @@ h2 {
   color: var(--tg-theme-hint-color, #666666);
   text-align: center;
 }
+
+/* Скрытие визуальной полосы прокрутки, сохраняя функциональность */
+::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: transparent;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* Для Firefox */
+* {
+  scrollbar-width: none;
+}
+
+/* Для IE и Edge */
+*::-ms-scrollbar {
+  display: none;
+}
+
+/* Глобальное скрытие полосы прокрутки для всех элементов */
+*::-webkit-scrollbar {
+  display: none;
+}
