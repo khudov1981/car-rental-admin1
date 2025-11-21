@@ -160,6 +160,7 @@ function App() {
         <AddCarForm
           onAdd={handleAddCar}
           onCancel={handleCancelAdd}
+          cars={cars}
         />
       )}
       
