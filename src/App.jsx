@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import './App.css'
 import Navigation from './components/Navigation'
 import CarList from './components/CarList'
+import ConfirmModal from './components/ConfirmModal'
 import { carsData, addCar, updateCar, deleteCar, restoreCar, getActiveCars, getDeletedCars } from './data/cars'
 
 function App() {
@@ -11,6 +12,8 @@ function App() {
   const [showAddForm, setShowAddForm] = useState(false)
   const [editingCar, setEditingCar] = useState(null)
   const [showDeleted, setShowDeleted] = useState(false)
+  const [showDeleteModal, setShowDeleteModal] = useState(false)
+  const [carToDelete, setCarToDelete] = useState(null)
 
   useEffect(() => {
     // Инициализация Telegram WebApp
@@ -43,9 +46,20 @@ function App() {
   }
 
   const handleDeleteCar = (id) => {
-    const deletedCar = deleteCar(id)
-    if (deletedCar) {
-      setCars(cars.map(car => car.id === id ? deletedCar : car))
+    const car = cars.find(c => c.id === id)
+    if (car) {
+      setCarToDelete(car)
+      setShowDeleteModal(true)
+    }
+  }
+
+  const confirmDeleteCar = () => {
+    if (carToDelete) {
+      const deletedCar = deleteCar(carToDelete.id)
+      if (deletedCar) {
+        setCars(cars.map(car => car.id === carToDelete.id ? deletedCar : car))
+      }
+      setCarToDelete(null)
     }
   }
 
@@ -70,6 +84,11 @@ function App() {
     } else {
       return getActiveCars()
     }
+  }
+
+  const closeDeleteModal = () => {
+    setShowDeleteModal(false)
+    setCarToDelete(null)
   }
 
   return (
@@ -127,6 +146,17 @@ function App() {
       </main>
       
       <Navigation activePage={activePage} setActivePage={setActivePage} />
+      
+      <ConfirmModal
+        isOpen={showDeleteModal}
+        onClose={closeDeleteModal}
+        onConfirm={confirmDeleteCar}
+        title="Удаление автомобиля"
+        message={`Вы уверены, что хотите удалить ${carToDelete?.brand} ${carToDelete?.model}?`}
+        confirmText="Удалить"
+        cancelText="Отмена"
+        confirmButtonClass="delete-button"
+      />
     </div>
   )
 }
