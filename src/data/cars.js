@@ -25,6 +25,15 @@ const saveCarsToStorage = (cars) => {
   }
 }
 
+// Функция для очистки данных об автомобилях из localStorage
+export const clearCarsStorage = () => {
+  try {
+    localStorage.removeItem(CARS_STORAGE_KEY)
+  } catch (error) {
+    console.error('Ошибка при очистке данных из localStorage:', error)
+  }
+}
+
 // Инициализация данных при загрузке
 let initialCars = getCarsFromStorage()
 
