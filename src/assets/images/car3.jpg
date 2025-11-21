@@ -1,1 +1,8 @@
-
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 200">
+  <rect width="300" height="200" fill="#f0f0f0"/>
+  <rect x="50" y="60" width="200" height="80" rx="10" fill="#888"/>
+  <rect x="70" y="70" width="160" height="30" rx="5" fill="#aaa"/>
+  <circle cx="100" cy="150" r="20" fill="#333"/>
+  <circle cx="200" cy="150" r="20" fill="#333"/>
+  <text x="150" y="100" text-anchor="middle" font-family="Arial" font-size="16" fill="#fff">Mercedes E-Class</text>
+</svg>
