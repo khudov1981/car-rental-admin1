@@ -3,16 +3,31 @@ import './EditCarForm.css'
 
 const EditCarForm = ({ car, onSave, onCancel }) => {
   const [plate, setPlate] = useState(car.plate)
+  const [insurance, setInsurance] = useState(car.insurance || '')
+  const [casco, setCasco] = useState(car.casco || '')
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    onSave({ ...car, plate: plate.toUpperCase() })
+    onSave({ 
+      ...car, 
+      plate: plate.toUpperCase(),
+      insurance: insurance.toUpperCase(),
+      casco: casco.toUpperCase()
+    })
   }
 
   const handlePlateChange = (e) => {
     // Ограничиваем ввод только буквами и цифрами
     const value = e.target.value.replace(/[^a-zA-Z0-9а-яА-Я]/g, '')
     setPlate(value.toUpperCase())
+  }
+
+  const handleInsuranceChange = (e) => {
+    setInsurance(e.target.value)
+  }
+
+  const handleCascoChange = (e) => {
+    setCasco(e.target.value)
   }
 
   return (
@@ -42,6 +57,30 @@ const EditCarForm = ({ car, onSave, onCancel }) => {
               autoFocus
             />
             <div className="input-hint">Только буквы и цифры</div>
+          </div>
+          
+          <div className="form-group">
+            <label htmlFor="insurance">Номер страховки (ОСАГО):</label>
+            <input
+              type="text"
+              id="insurance"
+              value={insurance}
+              onChange={handleInsuranceChange}
+              placeholder="Введите номер ОСАГО"
+              className="form-input"
+            />
+          </div>
+          
+          <div className="form-group">
+            <label htmlFor="casco">Номер КАСКО:</label>
+            <input
+              type="text"
+              id="casco"
+              value={casco}
+              onChange={handleCascoChange}
+              placeholder="Введите номер КАСКО"
+              className="form-input"
+            />
           </div>
           
           <div className="form-actions">

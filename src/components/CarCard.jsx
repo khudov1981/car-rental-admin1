@@ -112,6 +112,18 @@ const CarCard = ({ car, onEdit, onDelete, onRestore, showDeleted }) => {
             <span className="detail-label">Коробка:</span>
             <span className="detail-value">{getTransmissionText(car.transmission)}</span>
           </div>
+          {car.insurance && (
+            <div className="car-detail-row">
+              <span className="detail-label">ОСАГО:</span>
+              <span className="detail-value">{car.insurance}</span>
+            </div>
+          )}
+          {car.casco && (
+            <div className="car-detail-row">
+              <span className="detail-label">КАСКО:</span>
+              <span className="detail-value">{car.casco}</span>
+            </div>
+          )}
           <div className="car-actions-expanded">
             <button className="edit-button" onClick={() => onEdit(car)}>
               Редактировать
