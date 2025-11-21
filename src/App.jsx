@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import './App.css'
 import Navigation from './components/Navigation'
-import CarCard from './components/CarCard'
+import CarList from './components/CarList'
 import { carsData, addCar, updateCar, deleteCar } from './data/cars'
 
 function App() {
@@ -74,16 +74,11 @@ function App() {
               </button>
             </div>
             
-            <div className="cars-list">
-              {cars.map(car => (
-                <CarCard 
-                  key={car.id}
-                  car={car}
-                  onEdit={handleEditCar}
-                  onDelete={handleDeleteCar}
-                />
-              ))}
-            </div>
+            <CarList 
+              cars={cars}
+              onEdit={handleEditCar}
+              onDelete={handleDeleteCar}
+            />
           </div>
         )}
         
