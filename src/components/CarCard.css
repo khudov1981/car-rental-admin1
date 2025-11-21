@@ -71,7 +71,35 @@
   font-size: 0.9rem;
   color: var(--tg-theme-button-color, #229ed9);
   font-weight: 600;
-  margin-top: 4px;
+  margin: 4px 0;
+}
+
+.transmission-badge {
+  padding: 2px 6px;
+  border-radius: 6px;
+  font-size: 0.7rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.transmission-automatic {
+  background-color: #e3f2fd;
+  color: #1976d2;
+}
+
+.transmission-manual {
+  background-color: #f3e5f5;
+  color: #7b1fa2;
+}
+
+.transmission-robot {
+  background-color: #e8f5e8;
+  color: #388e3c;
+}
+
+.transmission-cvt {
+  background-color: #fff8e1;
+  color: #f57f17;
 }
 
 .expand-icon {

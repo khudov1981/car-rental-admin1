@@ -22,6 +22,26 @@ const CarCard = ({ car, onEdit, onDelete }) => {
     }
   }
 
+  const getTransmissionText = (transmission) => {
+    switch (transmission) {
+      case 'automatic': return 'АКП'
+      case 'manual': return 'МКП'
+      case 'robot': return 'Робот'
+      case 'cvt': return 'Вариатор'
+      default: return transmission
+    }
+  }
+
+  const getTransmissionClass = (transmission) => {
+    switch (transmission) {
+      case 'automatic': return 'transmission-automatic'
+      case 'manual': return 'transmission-manual'
+      case 'robot': return 'transmission-robot'
+      case 'cvt': return 'transmission-cvt'
+      default: return ''
+    }
+  }
+
   const toggleExpand = () => {
     setIsExpanded(!isExpanded)
   }
@@ -39,6 +59,9 @@ const CarCard = ({ car, onEdit, onDelete }) => {
             {getStatusText(car.status)}
           </span>
           <div className="car-price">{car.pricePerDay} руб/день</div>
+          <span className={`transmission-badge ${getTransmissionClass(car.transmission)}`}>
+            {getTransmissionText(car.transmission)}
+          </span>
         </div>
         <div className="expand-icon">
           {isExpanded ? '▲' : '▼'}
@@ -55,6 +78,10 @@ const CarCard = ({ car, onEdit, onDelete }) => {
           <div className="car-detail-row">
             <span className="detail-label">Цвет:</span>
             <span className="detail-value">{car.color}</span>
+          </div>
+          <div className="car-detail-row">
+            <span className="detail-label">Коробка:</span>
+            <span className="detail-value">{getTransmissionText(car.transmission)}</span>
           </div>
           <div className="car-actions-expanded">
             <button className="edit-button" onClick={() => onEdit(car)}>
