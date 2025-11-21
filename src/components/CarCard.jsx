@@ -1,8 +1,15 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import './CarCard.css'
 
 const CarCard = ({ car, onEdit, onDelete }) => {
+  const [imageLoaded, setImageLoaded] = useState(false)
   const [imageError, setImageError] = useState(false)
+
+  useEffect(() => {
+    // Сброс состояния при изменении автомобиля
+    setImageLoaded(false)
+    setImageError(false)
+  }, [car.id])
 
   const getStatusText = (status) => {
     switch (status) {
@@ -22,6 +29,10 @@ const CarCard = ({ car, onEdit, onDelete }) => {
     }
   }
 
+  const handleImageLoad = () => {
+    setImageLoaded(true)
+  }
+
   const handleImageError = () => {
     setImageError(true)
   }
@@ -29,6 +40,12 @@ const CarCard = ({ car, onEdit, onDelete }) => {
   return (
     <div className="car-card">
       <div className="car-image">
+        {!imageLoaded && !imageError && (
+          <div className="image-placeholder">
+            <div className="placeholder-icon">🚗</div>
+          </div>
+        )}
+        
         {imageError ? (
           <div className="image-placeholder">
             <div className="placeholder-icon">🚗</div>
@@ -37,7 +54,9 @@ const CarCard = ({ car, onEdit, onDelete }) => {
           <img 
             src={car.image} 
             alt={`${car.brand} ${car.model}`}
+            onLoad={handleImageLoad}
             onError={handleImageError}
+            style={{ display: imageLoaded ? 'block' : 'none' }}
           />
         )}
       </div>
