@@ -5,7 +5,7 @@ import CarSearch from './CarSearch'
 const CarList = ({ cars, onEdit, onDelete, onRestore, showDeleted }) => {
   const [searchTerm, setSearchTerm] = useState('')
   const [filters, setFilters] = useState({ status: 'all', brand: 'all' })
-  const [sortBy, setSortBy] = useState('priceAsc')
+  const [sortBy, setSortBy] = useState('newest') // По умолчанию сортируем по новизне
 
   // Маппинг русских названий марок автомобилей
   const brandTranslations = {
@@ -76,12 +76,17 @@ const CarList = ({ cars, onEdit, onDelete, onRestore, showDeleted }) => {
   const sortedCars = useMemo(() => {
     const sorted = [...cars].sort((a, b) => {
       switch (sortBy) {
+        case 'newest':
+          // Сортировка по новизне (новые автомобили первыми)
+          // Используем id как признак новизны (новые авто имеют больший id)
+          return b.id - a.id
         case 'priceAsc':
           return a.pricePerDay - b.pricePerDay
         case 'priceDesc':
           return b.pricePerDay - a.pricePerDay
         default:
-          return a.pricePerDay - b.pricePerDay
+          // По умолчанию сортируем по новизне
+          return b.id - a.id
       }
     })
     return sorted
