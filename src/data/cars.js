@@ -137,6 +137,14 @@ if (initialCars.length === 0) {
 export const carsData = initialCars
 
 export const addCar = (car, currentCars) => {
+  // Проверяем, существует ли уже автомобиль с таким же госномером
+  const existingCar = currentCars.find(c => c.plate === car.plate && !c.deleted)
+  
+  if (existingCar) {
+    // Если автомобиль с таким госномером уже существует, выбрасываем ошибку
+    throw new Error(`Автомобиль с госномером ${car.plate} уже существует`)
+  }
+  
   const newCar = {
     ...car,
     id: Date.now(),
@@ -162,6 +170,14 @@ export const addCar = (car, currentCars) => {
 }
 
 export const updateCar = (id, updatedCar, currentCars) => {
+  // Проверяем, существует ли уже другой автомобиль с таким же госномером
+  const existingCar = currentCars.find(c => c.plate === updatedCar.plate && c.id !== id && !c.deleted)
+  
+  if (existingCar) {
+    // Если другой автомобиль с таким госномером уже существует, выбрасываем ошибку
+    throw new Error(`Автомобиль с госномером ${updatedCar.plate} уже существует`)
+  }
+  
   const updatedCars = currentCars.map(car => car.id === id ? { ...car, ...updatedCar } : car)
   saveCarsToStorage(updatedCars)
   return updatedCars
