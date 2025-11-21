@@ -105,8 +105,17 @@ export const addCar = (car) => {
     status: 'available',
     deleted: false,
     deletedAt: null,
-    insurance: '',
-    casco: ''
+    // Для упрощенной формы добавления добавляем значения по умолчанию
+    brand: car.brand || 'Не указано',
+    model: car.model || 'Не указано',
+    year: car.year || new Date().getFullYear(),
+    color: car.color || 'Не указан',
+    pricePerDay: car.pricePerDay || 0,
+    transmission: car.transmission || 'automatic',
+    image: car.photos && car.photos.length > 0 ? car.photos[0] : 'https://images.unsplash.com/photo-1542362567-b20d4ce58b84?w=300&h=200&fit=crop',
+    insurance: car.insurance || '',
+    casco: car.casco || '',
+    photos: car.photos || []
   }
   carsData.push(newCar)
   return newCar

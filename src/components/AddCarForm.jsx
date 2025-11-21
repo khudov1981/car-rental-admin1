@@ -2,35 +2,22 @@ import React, { useState } from 'react'
 import './EditCarForm.css'
 
 const AddCarForm = ({ onAdd, onCancel }) => {
-  const [brand, setBrand] = useState('')
-  const [model, setModel] = useState('')
-  const [year, setYear] = useState('')
-  const [color, setColor] = useState('')
   const [plate, setPlate] = useState('')
-  const [pricePerDay, setPricePerDay] = useState('')
-  const [transmission, setTransmission] = useState('automatic')
-  const [insurance, setInsurance] = useState('')
-  const [casco, setCasco] = useState('')
+  const [photos, setPhotos] = useState(Array(5).fill(null)) // Заглушка для 5 фото
 
   const handleSubmit = (e) => {
     e.preventDefault()
     
     // Валидация обязательных полей
-    if (!brand || !model || !year || !color || !plate || !pricePerDay) {
-      alert('Пожалуйста, заполните все обязательные поля')
+    if (!plate) {
+      alert('Пожалуйста, введите госномер')
       return
     }
     
     const newCar = {
-      brand: brand.trim(),
-      model: model.trim(),
-      year: parseInt(year),
-      color: color.trim(),
       plate: plate.toUpperCase(),
-      pricePerDay: parseInt(pricePerDay),
-      transmission,
-      insurance: insurance.toUpperCase(),
-      casco: casco.toUpperCase()
+      // Добавляем заглушку для фото
+      photos: photos.map((_, index) => `https://images.unsplash.com/photo-${index + 1}?w=300&h=200&fit=crop`)
     }
     
     onAdd(newCar)
@@ -46,30 +33,6 @@ const AddCarForm = ({ onAdd, onCancel }) => {
     }
     
     setPlate(value)
-  }
-
-  const handleInsuranceChange = (e) => {
-    // Формат ОСАГО: 3 буквы, 10 цифр (всего 13 символов)
-    let value = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '')
-    
-    // Ограничиваем длину до 13 символов
-    if (value.length > 13) {
-      value = value.substring(0, 13)
-    }
-    
-    setInsurance(value)
-  }
-
-  const handleCascoChange = (e) => {
-    // Формат КАСКО: произвольная строка до 20 символов
-    let value = e.target.value.toUpperCase()
-    
-    // Ограничиваем длину до 20 символов
-    if (value.length > 20) {
-      value = value.substring(0, 20)
-    }
-    
-    setCasco(value)
   }
 
   // Форматирование отображаемого значения госномера
@@ -97,22 +60,19 @@ const AddCarForm = ({ onAdd, onCancel }) => {
     }
   }
 
-  // Форматирование отображаемого значения ОСАГО
-  const formatInsuranceDisplay = (value) => {
-    if (!value) return ''
-    
-    // Формат: XXX0000000000 (3 буквы, 10 цифр)
-    const cleanValue = value.replace(/[^A-Z0-9]/g, '')
-    
-    if (cleanValue.length <= 3) {
-      return cleanValue
-    } else if (cleanValue.length <= 13) {
-      const letterPart = cleanValue.substring(0, 3)
-      const numberPart = cleanValue.substring(3, 13)
-      return letterPart + numberPart
-    } else {
-      return cleanValue.substring(0, 13)
-    }
+  // Заглушка для фото - просто отображаем пустые блоки
+  const renderPhotoPlaceholders = () => {
+    return (
+      <div className="photos-grid">
+        {photos.map((_, index) => (
+          <div key={index} className="photo-placeholder">
+            <div className="photo-placeholder-content">
+              <span className="photo-placeholder-text">Фото {index + 1}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+    )
   }
 
   return (
@@ -125,57 +85,6 @@ const AddCarForm = ({ onAdd, onCancel }) => {
         
         <form onSubmit={handleSubmit}>
           <div className="form-group">
-            <label htmlFor="brand">Марка *:</label>
-            <input
-              type="text"
-              id="brand"
-              value={brand}
-              onChange={(e) => setBrand(e.target.value)}
-              placeholder="Введите марку"
-              className="form-input"
-              autoFocus
-            />
-          </div>
-          
-          <div className="form-group">
-            <label htmlFor="model">Модель *:</label>
-            <input
-              type="text"
-              id="model"
-              value={model}
-              onChange={(e) => setModel(e.target.value)}
-              placeholder="Введите модель"
-              className="form-input"
-            />
-          </div>
-          
-          <div className="form-group">
-            <label htmlFor="year">Год выпуска *:</label>
-            <input
-              type="number"
-              id="year"
-              value={year}
-              onChange={(e) => setYear(e.target.value)}
-              placeholder="Введите год"
-              min="1900"
-              max={new Date().getFullYear() + 1}
-              className="form-input"
-            />
-          </div>
-          
-          <div className="form-group">
-            <label htmlFor="color">Цвет *:</label>
-            <input
-              type="text"
-              id="color"
-              value={color}
-              onChange={(e) => setColor(e.target.value)}
-              placeholder="Введите цвет"
-              className="form-input"
-            />
-          </div>
-          
-          <div className="form-group">
             <label htmlFor="plate">Государственный номер *:</label>
             <input
               type="text"
@@ -185,64 +94,17 @@ const AddCarForm = ({ onAdd, onCancel }) => {
               placeholder="Введите госномер"
               maxLength="9"
               className="form-input"
+              autoFocus
             />
             <div className="input-hint">Формат: X000XX000</div>
           </div>
           
           <div className="form-group">
-            <label htmlFor="pricePerDay">Цена за день (руб.) *:</label>
-            <input
-              type="number"
-              id="pricePerDay"
-              value={pricePerDay}
-              onChange={(e) => setPricePerDay(e.target.value)}
-              placeholder="Введите цену"
-              min="0"
-              className="form-input"
-            />
-          </div>
-          
-          <div className="form-group">
-            <label htmlFor="transmission">Тип коробки передач:</label>
-            <select
-              id="transmission"
-              value={transmission}
-              onChange={(e) => setTransmission(e.target.value)}
-              className="form-input"
-            >
-              <option value="automatic">Автоматическая</option>
-              <option value="manual">Механическая</option>
-              <option value="robot">Робот</option>
-              <option value="cvt">Вариатор</option>
-            </select>
-          </div>
-          
-          <div className="form-group">
-            <label htmlFor="insurance">Номер страховки (ОСАГО):</label>
-            <input
-              type="text"
-              id="insurance"
-              value={formatInsuranceDisplay(insurance)}
-              onChange={handleInsuranceChange}
-              placeholder="Введите номер ОСАГО"
-              maxLength="13"
-              className="form-input"
-            />
-            <div className="input-hint">Формат: XXX0000000000 (3 буквы, 10 цифр)</div>
-          </div>
-          
-          <div className="form-group">
-            <label htmlFor="casco">Номер КАСКО:</label>
-            <input
-              type="text"
-              id="casco"
-              value={casco}
-              onChange={handleCascoChange}
-              placeholder="Введите номер КАСКО"
-              maxLength="20"
-              className="form-input"
-            />
-            <div className="input-hint">Произвольная строка до 20 символов</div>
+            <label>Фотографии автомобиля:</label>
+            <div className="photos-info">
+              <div className="input-hint">Необходимо загрузить минимум 5 фотографий</div>
+            </div>
+            {renderPhotoPlaceholders()}
           </div>
           
           <div className="form-actions">
