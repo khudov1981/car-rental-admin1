@@ -44,11 +44,26 @@ function App() {
       const user = webApp.initDataUnsafe.user || null
       setTelegramUser(user)
       
+      // Отладочные сообщения
+      console.log('Telegram WebApp initialized')
+      console.log('initDataUnsafe:', webApp.initDataUnsafe)
+      console.log('start_param:', webApp.initDataUnsafe.start_param)
+      console.log('localStorage welcomeShown:', localStorage.getItem('welcomeShown'))
+      
       // Проверяем, была ли использована команда /start
       const startParam = webApp.initDataUnsafe.start_param
-      if (startParam === 'welcome' || !localStorage.getItem('welcomeShown')) {
+      // Для тестирования добавим возможность принудительного показа приветствия
+      const forceWelcome = new URLSearchParams(window.location.search).get('welcome') === 'true'
+      
+      if (forceWelcome || startParam === 'welcome' || !localStorage.getItem('welcomeShown')) {
+        console.log('Showing welcome screen')
         setShowWelcome(true)
-        localStorage.setItem('welcomeShown', 'true')
+        // Не сохраняем в localStorage при принудительном показе для тестирования
+        if (!forceWelcome) {
+          localStorage.setItem('welcomeShown', 'true')
+        }
+      } else {
+        console.log('Not showing welcome screen')
       }
       
       // Настройка темы Telegram
@@ -61,10 +76,19 @@ function App() {
       
       // Отключаем возможность закрытия приложения свайпом вниз
       webApp.disableVerticalSwipes()
+    } else {
+      console.log('Telegram WebApp not available')
+      // Для тестирования вне Telegram
+      const forceWelcome = new URLSearchParams(window.location.search).get('welcome') === 'true'
+      if (forceWelcome) {
+        console.log('Showing welcome screen (force mode)')
+        setShowWelcome(true)
+      }
     }
   }, [])
 
   const handleStart = () => {
+    console.log('Welcome screen closed')
     setShowWelcome(false)
   }
 
@@ -210,6 +234,7 @@ function App() {
 
   // Показываем приветствие, если необходимо
   if (showWelcome) {
+    console.log('Rendering welcome screen')
     return (
       <div className="App">
         <WelcomeScreen onStart={handleStart} user={telegramUser} />
@@ -217,6 +242,7 @@ function App() {
     )
   }
 
+  console.log('Rendering main app')
   return (
     <div className="App">
       <header className="app-header">
