@@ -1,0 +1,119 @@
+.car-search {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  background: var(--tg-theme-bg-color, #ffffff);
+  border-bottom: 1px solid var(--tg-theme-hint-color, #e0e0e0);
+}
+
+.search-form {
+  display: flex;
+  width: 100%;
+}
+
+.search-input-container {
+  flex: 1;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-input {
+  width: 100%;
+  padding: 12px 16px 12px 40px;
+  border: 1px solid var(--tg-theme-hint-color, #e0e0e0);
+  border-radius: 24px;
+  font-size: 1rem;
+  background: var(--tg-theme-bg-color, #ffffff);
+  color: var(--tg-theme-text-color, #000000);
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.search-input:focus {
+  border-color: var(--tg-theme-button-color, #229ed9);
+}
+
+.search-button {
+  position: absolute;
+  left: 12px;
+  background: none;
+  border: none;
+  font-size: 1.1rem;
+  color: var(--tg-theme-hint-color, #999999);
+  cursor: pointer;
+}
+
+.filters-toggle {
+  display: flex;
+  justify-content: center;
+}
+
+.filters-toggle-button {
+  padding: 8px 16px;
+  background: var(--tg-theme-button-color, #229ed9);
+  color: var(--tg-theme-button-text-color, #ffffff);
+  border: none;
+  border-radius: 16px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.filters-toggle-button:hover {
+  opacity: 0.9;
+}
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 12px;
+  background: var(--tg-theme-secondary-bg-color, #f0f0f0);
+  border-radius: 8px;
+}
+
+.filter-select {
+  flex: 1;
+  min-width: 120px;
+  padding: 8px 12px;
+  border: 1px solid var(--tg-theme-hint-color, #e0e0e0);
+  border-radius: 6px;
+  background: var(--tg-theme-bg-color, #ffffff);
+  color: var(--tg-theme-text-color, #000000);
+  font-size: 0.9rem;
+  outline: none;
+  cursor: pointer;
+}
+
+.filter-select:focus {
+  border-color: var(--tg-theme-button-color, #229ed9);
+}
+
+.clear-filters-button {
+  padding: 8px 12px;
+  background: #f44336;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.clear-filters-button:hover {
+  opacity: 0.9;
+}
+
+@media (max-width: 480px) {
+  .filters {
+    flex-direction: column;
+  }
+  
+  .filter-select {
+    min-width: auto;
+  }
+}
