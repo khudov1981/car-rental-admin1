@@ -3,11 +3,17 @@ on:
     - workflows: build-workflow 
       filter: 
         branches: ["master", "main"]
+    - workflows: deploy-tg-bot-workflow
+      filter:
+        branches: ["main"]
 
 workflows:
   build-workflow:
     tasks:
       - build-task
+  deploy-tg-bot-workflow:
+    tasks:
+      - deploy-tg-bot-task
 
 tasks:
   - name: build-task
@@ -18,3 +24,10 @@ tasks:
           - npm ci
           - npm run build --if-present
           - npm test
+  - name: deploy-tg-bot-task
+    cubes:
+      - name: deploy-tg-bot
+        image: cr.yandex/mirror/library/node:lts
+        script:
+          - npm ci
+          - npm start
