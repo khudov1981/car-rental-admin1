@@ -1,14 +1,44 @@
 import React, { useState, useMemo } from 'react'
 import CarCard from './CarCard'
-import CarSearch from './CarSearch'
+import SearchBar from './SearchBar'
 
 const CarList = ({ cars, onEdit, onDelete, onRestore, showDeleted }) => {
   const [searchTerm, setSearchTerm] = useState('')
   const [filters, setFilters] = useState({ status: 'all', brand: 'all' })
   const [sortBy, setSortBy] = useState('newest') // По умолчанию сортируем по новизне
 
+  // Проверка на существование cars
+  if (!cars || !Array.isArray(cars)) {
+    return (
+      <div style={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '40px 20px',
+        textAlign: 'center',
+        color: 'var(--tg-theme-hint-color, #999999)'
+      }}>
+        <div style={{
+          fontSize: '3rem',
+          marginBottom: '16px',
+          opacity: '0.3'
+        }}>🚗</div>
+        <h3 style={{
+          margin: '0 0 8px 0',
+          color: 'var(--tg-theme-text-color, #000000)',
+          fontSize: '1.2rem'
+        }}>Ошибка загрузки данных</h3>
+        <p style={{
+          margin: '0',
+          fontSize: '0.9rem'
+        }}>Не удалось загрузить список автомобилей</p>
+      </div>
+    )
+  }
+
   // Маппинг русских названий марок автомобилей
-  const brandTranslations = {
+  const brandTranslations = useMemo(() => ({
     'тойота': 'Toyota',
     'тойоте': 'Toyota',
     'тойоты': 'Toyota',
@@ -64,7 +94,7 @@ const CarList = ({ cars, onEdit, onDelete, onRestore, showDeleted }) => {
     'приора': 'Lada',
     'гранта': 'Lada',
     'веста': 'Lada'
-  }
+  }), [])
 
   // Получаем уникальные марки для фильтра
   const uniqueBrands = useMemo(() => {
@@ -81,9 +111,9 @@ const CarList = ({ cars, onEdit, onDelete, onRestore, showDeleted }) => {
           // Используем id как признак новизны (новые авто имеют больший id)
           return b.id - a.id
         case 'priceAsc':
-          return a.pricePerDay - b.pricePerDay
+          return (a.pricePerDay || 0) - (b.pricePerDay || 0)
         case 'priceDesc':
-          return b.pricePerDay - a.pricePerDay
+          return (b.pricePerDay || 0) - (a.pricePerDay || 0)
         default:
           // По умолчанию сортируем по новизне
           return b.id - a.id
@@ -95,6 +125,10 @@ const CarList = ({ cars, onEdit, onDelete, onRestore, showDeleted }) => {
   // Фильтрация и поиск
   const filteredCars = useMemo(() => {
     return sortedCars.filter(car => {
+      // Проверка на удаление
+      if (showDeleted && !car.deleted) return false
+      if (!showDeleted && car.deleted) return false
+      
       // Поиск по тексту (с поддержкой русских названий)
       const matchesSearch = !searchTerm || 
         car.brand.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -117,7 +151,7 @@ const CarList = ({ cars, onEdit, onDelete, onRestore, showDeleted }) => {
       
       return matchesSearch && matchesStatus && matchesBrand
     })
-  }, [sortedCars, searchTerm, filters, brandTranslations])
+  }, [sortedCars, searchTerm, filters, brandTranslations, showDeleted])
 
   const handleSearch = (term) => {
     setSearchTerm(term)
@@ -131,7 +165,7 @@ const CarList = ({ cars, onEdit, onDelete, onRestore, showDeleted }) => {
     setSortBy(sort)
   }
 
-  if (!cars || cars.length === 0) {
+  if (cars.length === 0) {
     return (
       <div style={{
         display: 'flex',
@@ -165,7 +199,7 @@ const CarList = ({ cars, onEdit, onDelete, onRestore, showDeleted }) => {
       width: '100%'
     }}>
       {!showDeleted && (
-        <CarSearch 
+        <SearchBar 
           onSearch={handleSearch}
           onFilter={handleFilter}
           onSort={handleSort}
@@ -210,7 +244,7 @@ const CarList = ({ cars, onEdit, onDelete, onRestore, showDeleted }) => {
               color: 'var(--tg-theme-hint-color, #666666)',
               textAlign: 'center'
             }}>
-              Найдено: {filteredCars.length} из {cars.length}
+              Найдено: {filteredCars.length} из {cars.filter(car => !car.deleted).length}
             </div>
           )}
           {filteredCars.map(car => (

@@ -3,24 +3,33 @@ import './App.css'
 import Navigation from './components/Navigation'
 import CarList from './components/CarList'
 import ConfirmModal from './components/ConfirmModal'
-import EditCarForm from './components/EditCarForm'
-import AddCarForm from './components/AddCarForm'
+import CarForm from './components/CarForm'
 import { addCar, updateCar, deleteCar, restoreCar, getActiveCars, getDeletedCars, getCarsFromStorage, clearCarsStorage } from './data/cars'
 
 function App() {
   const [activePage, setActivePage] = useState('cars')
   const [telegramUser, setTelegramUser] = useState(null)
   const [cars, setCars] = useState([])
-  const [showAddForm, setShowAddForm] = useState(false)
+  const [showCarForm, setShowCarForm] = useState(false)
   const [editingCar, setEditingCar] = useState(null)
   const [showDeleted, setShowDeleted] = useState(false)
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [carToDelete, setCarToDelete] = useState(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+  const [formMode, setFormMode] = useState('add') // 'add' или 'edit'
 
   // Инициализация данных об автомобилях из localStorage
   useEffect(() => {
-    const storedCars = getCarsFromStorage()
-    setCars(storedCars)
+    try {
+      const storedCars = getCarsFromStorage()
+      setCars(storedCars)
+    } catch (err) {
+      console.error('Ошибка при загрузке данных об автомобилях:', err)
+      setError('Не удалось загрузить данные об автомобилях')
+    } finally {
+      setLoading(false)
+    }
   }, [])
 
   useEffect(() => {
@@ -40,15 +49,26 @@ function App() {
   }, [])
 
   const handleAddCar = (carData) => {
-    const newCars = addCar(carData, cars)
-    setCars(newCars)
-    setShowAddForm(false)
+    try {
+      const newCars = addCar(carData, cars)
+      setCars(newCars)
+      setShowCarForm(false)
+    } catch (err) {
+      console.error('Ошибка при добавлении автомобиля:', err)
+      alert('Не удалось добавить автомобиль. Попробуйте еще раз.')
+    }
   }
 
   const handleUpdateCar = (id, carData) => {
-    const newCars = updateCar(id, carData, cars)
-    setCars(newCars)
-    setEditingCar(null)
+    try {
+      const newCars = updateCar(id, carData, cars)
+      setCars(newCars)
+      setShowCarForm(false)
+      setEditingCar(null)
+    } catch (err) {
+      console.error('Ошибка при обновлении автомобиля:', err)
+      alert('Не удалось обновить автомобиль. Попробуйте еще раз.')
+    }
   }
 
   const handleDeleteCar = (id) => {
@@ -61,31 +81,50 @@ function App() {
 
   const confirmDeleteCar = () => {
     if (carToDelete) {
-      const newCars = deleteCar(carToDelete.id, cars)
-      setCars(newCars)
-      setCarToDelete(null)
+      try {
+        const newCars = deleteCar(carToDelete.id, cars)
+        setCars(newCars)
+        setCarToDelete(null)
+      } catch (err) {
+        console.error('Ошибка при удалении автомобиля:', err)
+        alert('Не удалось удалить автомобиль. Попробуйте еще раз.')
+      }
     }
   }
 
   const handleRestoreCar = (id) => {
-    const newCars = restoreCar(id, cars)
-    setCars(newCars)
+    try {
+      const newCars = restoreCar(id, cars)
+      setCars(newCars)
+    } catch (err) {
+      console.error('Ошибка при восстановлении автомобиля:', err)
+      alert('Не удалось восстановить автомобиль. Попробуйте еще раз.')
+    }
   }
 
   const handleEditCar = (car) => {
     setEditingCar(car)
+    setFormMode('edit')
+    setShowCarForm(true)
   }
 
-  const handleSaveEditCar = (updatedCar) => {
-    handleUpdateCar(updatedCar.id, updatedCar)
+  const handleSaveCar = (carData) => {
+    if (formMode === 'add') {
+      handleAddCar(carData)
+    } else {
+      handleUpdateCar(editingCar.id, carData)
+    }
   }
 
-  const handleCancelEdit = () => {
+  const handleCancelForm = () => {
+    setShowCarForm(false)
     setEditingCar(null)
+    setFormMode('add')
   }
 
-  const handleCancelAdd = () => {
-    setShowAddForm(false)
+  const handleShowAddForm = () => {
+    setFormMode('add')
+    setShowCarForm(true)
   }
 
   const toggleDeletedView = () => {
@@ -94,8 +133,15 @@ function App() {
   }
 
   const handleClearData = () => {
-    clearCarsStorage();
-    setCars([]);
+    if (window.confirm('Вы уверены, что хотите очистить все данные? Это действие нельзя отменить.')) {
+      try {
+        clearCarsStorage();
+        setCars([]);
+      } catch (err) {
+        console.error('Ошибка при очистке данных:', err)
+        alert('Не удалось очистить данные. Попробуйте еще раз.')
+      }
+    }
   };
 
   const getDisplayedCars = () => {
@@ -109,6 +155,49 @@ function App() {
   const closeDeleteModal = () => {
     setShowDeleteModal(false)
     setCarToDelete(null)
+  }
+
+  if (loading) {
+    return (
+      <div className="App">
+        <div style={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: '100vh',
+          fontSize: '1.2rem'
+        }}>
+          Загрузка...
+        </div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="App">
+        <div style={{
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: '100vh',
+          padding: '20px',
+          textAlign: 'center'
+        }}>
+          <div style={{fontSize: '3rem', marginBottom: '16px'}}>⚠️</div>
+          <h2>Ошибка загрузки данных</h2>
+          <p>{error}</p>
+          <button 
+            className="tg-button" 
+            onClick={() => window.location.reload()}
+            style={{marginTop: '20px'}}
+          >
+            Перезагрузить
+          </button>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -133,7 +222,7 @@ function App() {
               <div className="header-actions">
                 <button 
                   className="tg-button add-car-button"
-                  onClick={() => setShowAddForm(true)}
+                  onClick={handleShowAddForm}
                   style={{ display: showDeleted ? 'none' : 'block' }}
                 >
                   + Добавить авто
@@ -148,7 +237,7 @@ function App() {
             </div>
             
             <CarList 
-              cars={getDisplayedCars()}
+              cars={cars}
               onEdit={handleEditCar}
               onDelete={handleDeleteCar}
               onRestore={handleRestoreCar}
@@ -170,19 +259,13 @@ function App() {
       
       <Navigation activePage={activePage} setActivePage={setActivePage} />
       
-      {showAddForm && (
-        <AddCarForm
-          onAdd={handleAddCar}
-          onCancel={handleCancelAdd}
-          cars={cars}
-        />
-      )}
-      
-      {editingCar && (
-        <EditCarForm
+      {showCarForm && (
+        <CarForm
           car={editingCar}
-          onSave={handleSaveEditCar}
-          onCancel={handleCancelEdit}
+          onSubmit={handleSaveCar}
+          onCancel={handleCancelForm}
+          cars={cars}
+          mode={formMode}
         />
       )}
       

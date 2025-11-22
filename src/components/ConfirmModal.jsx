@@ -9,7 +9,12 @@ const ConfirmModal = ({
   message = 'Вы уверены?', 
   confirmText = 'Да', 
   cancelText = 'Отмена',
-  confirmButtonClass = 'confirm-button'
+  confirmButtonClass = 'confirm-button',
+  cancelButtonClass = 'cancel-button',
+  showCancel = true,
+  onSecondaryAction = null,
+  secondaryText = '',
+  secondaryButtonClass = 'secondary-button'
 }) => {
   if (!isOpen) return null
 
@@ -20,6 +25,13 @@ const ConfirmModal = ({
 
   const handleCancel = () => {
     onClose()
+  }
+
+  const handleSecondaryAction = () => {
+    if (onSecondaryAction) {
+      onSecondaryAction()
+      onClose()
+    }
   }
 
   const handleBackdropClick = (e) => {
@@ -38,9 +50,16 @@ const ConfirmModal = ({
           <p>{message}</p>
         </div>
         <div className="modal-footer">
-          <button className="cancel-button" onClick={handleCancel}>
-            {cancelText}
-          </button>
+          {showCancel && (
+            <button className={cancelButtonClass} onClick={handleCancel}>
+              {cancelText}
+            </button>
+          )}
+          {onSecondaryAction && (
+            <button className={secondaryButtonClass} onClick={handleSecondaryAction}>
+              {secondaryText}
+            </button>
+          )}
           <button className={confirmButtonClass} onClick={handleConfirm}>
             {confirmText}
           </button>
