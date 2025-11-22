@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import './EditCarForm.css'
+import './CarCard.css'
 import { getCarInfoByPlate } from '../data/plateVinDatabase'
 import { checkCarExists } from '../data/cars'
 import ImageUploader from './ImageUploader'
