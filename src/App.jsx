@@ -42,6 +42,13 @@ function App() {
       const user = webApp.initDataUnsafe.user || null
       setTelegramUser(user)
       
+      // Обновляем title страницы
+      if (user) {
+        document.title = `${user.first_name}`;
+      } else {
+        document.title = 'Админ панель';
+      }
+      
       // Настройка темы Telegram
       document.documentElement.style.setProperty('--tg-theme-bg-color', webApp.themeParams.bg_color || '#ffffff')
       document.documentElement.style.setProperty('--tg-theme-text-color', webApp.themeParams.text_color || '#000000')
@@ -198,7 +205,7 @@ function App() {
   return (
     <div className="App">
       <header className="app-header">
-        <h1>Car Rental Admin</h1>
+        <h1>{telegramUser ? `${telegramUser.first_name}` : 'Админ панель'}</h1>
         {telegramUser && (
           <div className="user-info">
             Привет, {telegramUser.first_name}!
