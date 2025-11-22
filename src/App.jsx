@@ -132,18 +132,6 @@ function App() {
     setEditingCar(null) // Закрываем форму редактирования при переключении вида
   }
 
-  const handleClearData = () => {
-    if (window.confirm('Вы уверены, что хотите очистить все данные? Это действие нельзя отменить.')) {
-      try {
-        clearCarsStorage();
-        setCars([]);
-      } catch (err) {
-        console.error('Ошибка при очистке данных:', err)
-        alert('Не удалось очистить данные. Попробуйте еще раз.')
-      }
-    }
-  };
-
   const getDisplayedCars = () => {
     if (showDeleted) {
       return getDeletedCars(cars)
@@ -209,9 +197,6 @@ function App() {
             Привет, {telegramUser.first_name}!
           </div>
         )}
-        <button className="tg-button clear-data-button" onClick={handleClearData}>
-          Очистить данные
-        </button>
       </header>
       
       <main className="app-content">
