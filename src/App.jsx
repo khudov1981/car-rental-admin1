@@ -3,21 +3,21 @@ import './App.css'
 import Navigation from './components/Navigation'
 import CarList from './components/CarList'
 import ConfirmModal from './components/ConfirmModal'
-import EditCarForm from './components/EditCarForm'
-import AddCarForm from './components/AddCarForm'
+import CarForm from './components/CarForm'
 import { addCar, updateCar, deleteCar, restoreCar, getActiveCars, getDeletedCars, getCarsFromStorage, clearCarsStorage } from './data/cars'
 
 function App() {
   const [activePage, setActivePage] = useState('cars')
   const [telegramUser, setTelegramUser] = useState(null)
   const [cars, setCars] = useState([])
-  const [showAddForm, setShowAddForm] = useState(false)
+  const [showCarForm, setShowCarForm] = useState(false)
   const [editingCar, setEditingCar] = useState(null)
   const [showDeleted, setShowDeleted] = useState(false)
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [carToDelete, setCarToDelete] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [formMode, setFormMode] = useState('add') // 'add' или 'edit'
 
   // Инициализация данных об автомобилях из localStorage
   useEffect(() => {
@@ -52,7 +52,7 @@ function App() {
     try {
       const newCars = addCar(carData, cars)
       setCars(newCars)
-      setShowAddForm(false)
+      setShowCarForm(false)
     } catch (err) {
       console.error('Ошибка при добавлении автомобиля:', err)
       alert('Не удалось добавить автомобиль. Попробуйте еще раз.')
@@ -63,6 +63,7 @@ function App() {
     try {
       const newCars = updateCar(id, carData, cars)
       setCars(newCars)
+      setShowCarForm(false)
       setEditingCar(null)
     } catch (err) {
       console.error('Ошибка при обновлении автомобиля:', err)
@@ -103,18 +104,27 @@ function App() {
 
   const handleEditCar = (car) => {
     setEditingCar(car)
+    setFormMode('edit')
+    setShowCarForm(true)
   }
 
-  const handleSaveEditCar = (updatedCar) => {
-    handleUpdateCar(updatedCar.id, updatedCar)
+  const handleSaveCar = (carData) => {
+    if (formMode === 'add') {
+      handleAddCar(carData)
+    } else {
+      handleUpdateCar(editingCar.id, carData)
+    }
   }
 
-  const handleCancelEdit = () => {
+  const handleCancelForm = () => {
+    setShowCarForm(false)
     setEditingCar(null)
+    setFormMode('add')
   }
 
-  const handleCancelAdd = () => {
-    setShowAddForm(false)
+  const handleShowAddForm = () => {
+    setFormMode('add')
+    setShowCarForm(true)
   }
 
   const toggleDeletedView = () => {
@@ -212,7 +222,7 @@ function App() {
               <div className="header-actions">
                 <button 
                   className="tg-button add-car-button"
-                  onClick={() => setShowAddForm(true)}
+                  onClick={handleShowAddForm}
                   style={{ display: showDeleted ? 'none' : 'block' }}
                 >
                   + Добавить авто
@@ -249,19 +259,13 @@ function App() {
       
       <Navigation activePage={activePage} setActivePage={setActivePage} />
       
-      {showAddForm && (
-        <AddCarForm
-          onAdd={handleAddCar}
-          onCancel={handleCancelAdd}
-          cars={cars}
-        />
-      )}
-      
-      {editingCar && (
-        <EditCarForm
+      {showCarForm && (
+        <CarForm
           car={editingCar}
-          onSave={handleSaveEditCar}
-          onCancel={handleCancelEdit}
+          onSubmit={handleSaveCar}
+          onCancel={handleCancelForm}
+          cars={cars}
+          mode={formMode}
         />
       )}
       

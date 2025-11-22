@@ -2,7 +2,17 @@ import React, { useState } from 'react'
 import './CarCard.css'
 import { formatPlateDisplay, formatInsuranceDisplay } from '../utils/formatters'
 
-const CarCard = ({ car, onEdit, onDelete, onRestore, showDeleted }) => {
+const CarCard = ({ 
+  car, 
+  onEdit, 
+  onDelete, 
+  onRestore, 
+  showDeleted,
+  showActions = true,
+  showPhotos = true,
+  showInsurance = true,
+  showCasco = true
+}) => {
   const [isExpanded, setIsExpanded] = useState(false)
 
   const getStatusText = (status) => {
@@ -89,8 +99,8 @@ const CarCard = ({ car, onEdit, onDelete, onRestore, showDeleted }) => {
         </div>
       </div>
 
-      {/* Кнопка восстановления для удаленных авто (всегда видна) */}
-      {showDeleted && (
+      {/* Кнопка восстановления для удаленных авто (всегда видна если showActions=true) */}
+      {showDeleted && showActions && (
         <div className="restore-actions">
           <button className="restore-button" onClick={() => onRestore(car.id)}>
             Восстановить
@@ -102,7 +112,7 @@ const CarCard = ({ car, onEdit, onDelete, onRestore, showDeleted }) => {
       {isExpanded && !showDeleted && (
         <div className="car-details-expanded">
           {/* Фотографии автомобиля */}
-          {car.photos && car.photos.length > 0 && (
+          {showPhotos && car.photos && car.photos.length > 0 && (
             <div className="car-photos">
               <div className="photos-grid">
                 {car.photos.slice(0, 3).map((photo, index) => (
@@ -126,26 +136,28 @@ const CarCard = ({ car, onEdit, onDelete, onRestore, showDeleted }) => {
             <span className="detail-label">Коробка:</span>
             <span className="detail-value">{getTransmissionText(car.transmission)}</span>
           </div>
-          {car.insurance && (
+          {showInsurance && car.insurance && (
             <div className="car-detail-row">
               <span className="detail-label">ОСАГО:</span>
               <span className="detail-value">{formatInsuranceDisplay(car.insurance)}</span>
             </div>
           )}
-          {car.casco && (
+          {showCasco && car.casco && (
             <div className="car-detail-row">
               <span className="detail-label">КАСКО:</span>
               <span className="detail-value">{car.casco}</span>
             </div>
           )}
-          <div className="car-actions-expanded">
-            <button className="edit-button" onClick={() => onEdit(car)}>
-              Редактировать
-            </button>
-            <button className="delete-button" onClick={() => onDelete(car.id)}>
-              Удалить
-            </button>
-          </div>
+          {showActions && (
+            <div className="car-actions-expanded">
+              <button className="edit-button" onClick={() => onEdit(car)}>
+                Редактировать
+              </button>
+              <button className="delete-button" onClick={() => onDelete(car.id)}>
+                Удалить
+              </button>
+            </div>
+          )}
         </div>
       )}
     </div>

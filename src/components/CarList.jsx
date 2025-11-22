@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react'
 import CarCard from './CarCard'
-import CarSearch from './CarSearch'
+import SearchBar from './SearchBar'
 
 const CarList = ({ cars, onEdit, onDelete, onRestore, showDeleted }) => {
   const [searchTerm, setSearchTerm] = useState('')
@@ -199,7 +199,7 @@ const CarList = ({ cars, onEdit, onDelete, onRestore, showDeleted }) => {
       width: '100%'
     }}>
       {!showDeleted && (
-        <CarSearch 
+        <SearchBar 
           onSearch={handleSearch}
           onFilter={handleFilter}
           onSort={handleSort}
