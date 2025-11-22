@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import './CarSearch.css'
+import './SearchBar.css'
 
 const SearchBar = ({ 
   onSearch, 
