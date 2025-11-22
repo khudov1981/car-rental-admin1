@@ -187,14 +187,12 @@ const CarForm = ({
     
     // Форма валидна только если:
     // 1. Введен госномер
-    // 2. Найдена информация об автомобиле или нет ошибки существования
+    // 2. Найдена информация об автомобиле
     // 3. Введена корректная цена
-    // 4. Все фотографии загружены
     return formData.plate.trim().length > 0 && 
-           !carExistsError && 
+           carInfo !== null && 
            formData.pricePerDay.trim().length > 0 && 
-           parseInt(formData.pricePerDay) > 0 &&
-           formData.photos.every(photo => photo !== null)
+           parseInt(formData.pricePerDay) > 0
   }
 
   // Проверка валидности стоимости
