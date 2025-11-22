@@ -222,7 +222,7 @@ function App() {
             </div>
             
             <CarList 
-              cars={cars}
+              cars={getDisplayedCars()}
               onEdit={handleEditCar}
               onDelete={handleDeleteCar}
               onRestore={handleRestoreCar}
