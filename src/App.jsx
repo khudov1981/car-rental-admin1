@@ -4,6 +4,7 @@ import Navigation from './components/Navigation'
 import CarList from './components/CarList'
 import ConfirmModal from './components/ConfirmModal'
 import CarForm from './components/CarForm'
+import WelcomeScreen from './components/WelcomeScreen'
 import { addCar, updateCar, deleteCar, restoreCar, getActiveCars, getDeletedCars, getCarsFromStorage, clearCarsStorage } from './data/cars'
 
 function App() {
@@ -18,6 +19,7 @@ function App() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [formMode, setFormMode] = useState('add') // 'add' или 'edit'
+  const [showWelcome, setShowWelcome] = useState(false)
 
   // Инициализация данных об автомобилях из localStorage
   useEffect(() => {
@@ -36,7 +38,18 @@ function App() {
     // Инициализация Telegram WebApp
     if (window.Telegram && window.Telegram.WebApp) {
       const webApp = window.Telegram.WebApp
-      setTelegramUser(webApp.initDataUnsafe.user || null)
+      webApp.ready()
+      
+      // Получаем данные о пользователе
+      const user = webApp.initDataUnsafe.user || null
+      setTelegramUser(user)
+      
+      // Проверяем, была ли использована команда /start
+      const startParam = webApp.initDataUnsafe.start_param
+      if (startParam === 'welcome' || !localStorage.getItem('welcomeShown')) {
+        setShowWelcome(true)
+        localStorage.setItem('welcomeShown', 'true')
+      }
       
       // Настройка темы Telegram
       document.documentElement.style.setProperty('--tg-theme-bg-color', webApp.themeParams.bg_color || '#ffffff')
@@ -45,8 +58,15 @@ function App() {
       document.documentElement.style.setProperty('--tg-theme-link-color', webApp.themeParams.link_color || '#229ed9')
       document.documentElement.style.setProperty('--tg-theme-button-color', webApp.themeParams.button_color || '#229ed9')
       document.documentElement.style.setProperty('--tg-theme-button-text-color', webApp.themeParams.button_text_color || '#ffffff')
+      
+      // Отключаем возможность закрытия приложения свайпом вниз
+      webApp.disableVerticalSwipes()
     }
   }, [])
+
+  const handleStart = () => {
+    setShowWelcome(false)
+  }
 
   const handleAddCar = (carData) => {
     try {
@@ -184,6 +204,15 @@ function App() {
             Перезагрузить
           </button>
         </div>
+      </div>
+    )
+  }
+
+  // Показываем приветствие, если необходимо
+  if (showWelcome) {
+    return (
+      <div className="App">
+        <WelcomeScreen onStart={handleStart} user={telegramUser} />
       </div>
     )
   }
