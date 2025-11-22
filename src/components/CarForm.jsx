@@ -80,12 +80,6 @@ const CarForm = ({
       return
     }
     
-    // Проверяем, что загружены все фотографии (только для добавления)
-    if (mode === 'add' && formData.photos.some(photo => !photo)) {
-      alert('Пожалуйста, загрузите все 5 фотографий автомобиля')
-      return
-    }
-    
     let carData
     
     if (mode === 'add') {
