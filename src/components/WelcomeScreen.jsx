@@ -13,12 +13,6 @@ const WelcomeScreen = ({ onStart, user }) => {
           <h2>Добро пожаловать в Car Rental Admin</h2>
         )}
         <p>Управляйте своим автопарком прямо в Telegram</p>
-        <ul className="features-list">
-          <li>Добавляйте и редактируйте автомобили</li>
-          <li>Отслеживайте статус каждого авто</li>
-          <li>Управляйте бронированиями</li>
-          <li>Получайте уведомления</li>
-        </ul>
         <button className="tg-button start-button" onClick={onStart}>
           Начать работу
         </button>
