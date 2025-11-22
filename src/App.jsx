@@ -39,7 +39,10 @@ function App() {
       webApp.ready()
       
       // Получаем данные о пользователе
+      console.log('Telegram WebApp available');
+      console.log('initDataUnsafe:', webApp.initDataUnsafe);
       const user = webApp.initDataUnsafe.user || null
+      console.log('User data:', user);
       setTelegramUser(user)
       
       // Обновляем title страницы
@@ -59,6 +62,8 @@ function App() {
       
       // Отключаем возможность закрытия приложения свайпом вниз
       webApp.disableVerticalSwipes()
+    } else {
+      console.log('Telegram WebApp not available');
     }
   }, [])
 
@@ -211,6 +216,10 @@ function App() {
             Привет, {telegramUser.first_name}!
           </div>
         )}
+        {/* Отладочная информация */}
+        <div style={{ fontSize: '0.8rem', color: '#666', marginTop: '5px' }}>
+          {telegramUser ? `ID: ${telegramUser.id}` : 'Пользователь не определен'}
+        </div>
       </header>
       
       <main className="app-content">
