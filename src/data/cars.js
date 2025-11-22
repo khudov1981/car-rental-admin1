@@ -6,7 +6,14 @@ export const getCarsFromStorage = () => {
   try {
     const storedData = localStorage.getItem(CARS_STORAGE_KEY)
     if (storedData) {
-      return JSON.parse(storedData)
+      const parsedData = JSON.parse(storedData)
+      // Проверяем, что данные являются массивом
+      if (Array.isArray(parsedData)) {
+        return parsedData
+      } else {
+        console.warn('Данные в localStorage не являются массивом, возвращаем пустой массив')
+        return []
+      }
     }
   } catch (error) {
     console.error('Ошибка при получении данных из localStorage:', error)
@@ -19,9 +26,17 @@ export const getCarsFromStorage = () => {
 // Функция для сохранения автомобилей в localStorage
 const saveCarsToStorage = (cars) => {
   try {
+    // Проверяем, что cars является массивом
+    if (!Array.isArray(cars)) {
+      console.error('Попытка сохранить не массив в localStorage')
+      return
+    }
+    
     localStorage.setItem(CARS_STORAGE_KEY, JSON.stringify(cars))
   } catch (error) {
     console.error('Ошибка при сохранении данных в localStorage:', error)
+    // Показываем пользователю сообщение об ошибке
+    alert('Ошибка при сохранении данных. Проверьте доступ к хранилищу браузера.')
   }
 }
 
@@ -31,6 +46,8 @@ export const clearCarsStorage = () => {
     localStorage.removeItem(CARS_STORAGE_KEY)
   } catch (error) {
     console.error('Ошибка при очистке данных из localStorage:', error)
+    // Показываем пользователю сообщение об ошибке
+    alert('Ошибка при очистке данных.')
   }
 }
 
@@ -42,10 +59,22 @@ export const carsData = initialCars
 
 // Функция для проверки существования автомобиля с указанным госномером
 export const checkCarExists = (plate, currentCars) => {
+  // Проверяем, что currentCars является массивом
+  if (!Array.isArray(currentCars)) {
+    console.error('checkCarExists: currentCars не является массивом')
+    return false
+  }
+  
   return currentCars.some(c => c.plate === plate && !c.deleted)
 }
 
 export const addCar = (car, currentCars) => {
+  // Проверяем, что currentCars является массивом
+  if (!Array.isArray(currentCars)) {
+    console.error('addCar: currentCars не является массивом')
+    return []
+  }
+  
   const newCar = {
     ...car,
     id: Date.now(),
@@ -71,12 +100,24 @@ export const addCar = (car, currentCars) => {
 }
 
 export const updateCar = (id, updatedCar, currentCars) => {
+  // Проверяем, что currentCars является массивом
+  if (!Array.isArray(currentCars)) {
+    console.error('updateCar: currentCars не является массивом')
+    return []
+  }
+  
   const updatedCars = currentCars.map(car => car.id === id ? { ...car, ...updatedCar } : car)
   saveCarsToStorage(updatedCars)
   return updatedCars
 }
 
 export const deleteCar = (id, currentCars) => {
+  // Проверяем, что currentCars является массивом
+  if (!Array.isArray(currentCars)) {
+    console.error('deleteCar: currentCars не является массивом')
+    return []
+  }
+  
   const updatedCars = currentCars.map(car => {
     if (car.id === id) {
       return { ...car, deleted: true, deletedAt: new Date().toISOString() }
@@ -88,6 +129,12 @@ export const deleteCar = (id, currentCars) => {
 }
 
 export const restoreCar = (id, currentCars) => {
+  // Проверяем, что currentCars является массивом
+  if (!Array.isArray(currentCars)) {
+    console.error('restoreCar: currentCars не является массивом')
+    return []
+  }
+  
   const updatedCars = currentCars.map(car => {
     if (car.id === id) {
       return { ...car, deleted: false, deletedAt: null }
@@ -99,9 +146,21 @@ export const restoreCar = (id, currentCars) => {
 }
 
 export const getDeletedCars = (currentCars) => {
+  // Проверяем, что currentCars является массивом
+  if (!Array.isArray(currentCars)) {
+    console.error('getDeletedCars: currentCars не является массивом')
+    return []
+  }
+  
   return currentCars.filter(car => car.deleted)
 }
 
 export const getActiveCars = (currentCars) => {
+  // Проверяем, что currentCars является массивом
+  if (!Array.isArray(currentCars)) {
+    console.error('getActiveCars: currentCars не является массивом')
+    return []
+  }
+  
   return currentCars.filter(car => !car.deleted)
 }

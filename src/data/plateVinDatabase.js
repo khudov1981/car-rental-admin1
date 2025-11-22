@@ -68,29 +68,90 @@ export const vinCarDatabase = [
 
 // Функция для добавления новой связки "госномер - VIN - авто"
 export const addPlateVinCar = (plate, vin, carInfo) => {
+  // Проверка на существование обязательных параметров
+  if (!plate || !vin || !carInfo) {
+    console.error('addPlateVinCar: отсутствуют обязательные параметры')
+    return false
+  }
+  
+  // Проверка на строковый тип параметров
+  if (typeof plate !== 'string' || typeof vin !== 'string') {
+    console.error('addPlateVinCar: plate и vin должны быть строками')
+    return false
+  }
+  
+  // Проверка на объектный тип carInfo
+  if (typeof carInfo !== 'object' || carInfo === null) {
+    console.error('addPlateVinCar: carInfo должен быть объектом')
+    return false
+  }
+  
   // Добавляем связку госномер - VIN
-  plateVinDatabase.push({ plate, vin })
+  plateVinDatabase.push({ plate: plate.toUpperCase(), vin })
   
   // Добавляем информацию об автомобиле
   vinCarDatabase.push({ vin, ...carInfo })
   
   console.log(`Добавлена новая связка: ${plate} -> ${vin} -> ${JSON.stringify(carInfo)}`)
+  return true
 }
 
 // Функция для получения VIN по госномеру
 export const getVinByPlate = (plate) => {
-  const record = plateVinDatabase.find(item => item.plate === plate)
+  // Проверка на существование параметра
+  if (!plate) {
+    console.warn('getVinByPlate: отсутствует параметр plate')
+    return null
+  }
+  
+  // Проверка на строковый тип
+  if (typeof plate !== 'string') {
+    console.warn('getVinByPlate: plate должен быть строкой')
+    return null
+  }
+  
+  const record = plateVinDatabase.find(item => item.plate === plate.toUpperCase())
   return record ? record.vin : null
 }
 
 // Функция для получения информации об автомобиле по VIN
 export const getCarInfoByVin = (vin) => {
+  // Проверка на существование параметра
+  if (!vin) {
+    console.warn('getCarInfoByVin: отсутствует параметр vin')
+    return null
+  }
+  
+  // Проверка на строковый тип
+  if (typeof vin !== 'string') {
+    console.warn('getCarInfoByVin: vin должен быть строкой')
+    return null
+  }
+  
   const carInfo = vinCarDatabase.find(car => car.vin === vin)
   return carInfo || null
 }
 
 // Функция для проверки госномера и получения информации об автомобиле
 export const getCarInfoByPlate = (plate) => {
+  // Проверка на существование параметра
+  if (!plate) {
+    return {
+      success: false,
+      message: 'Не указан госномер',
+      data: null
+    }
+  }
+  
+  // Проверка на строковый тип
+  if (typeof plate !== 'string') {
+    return {
+      success: false,
+      message: 'Госномер должен быть строкой',
+      data: null
+    }
+  }
+  
   const vin = getVinByPlate(plate)
   
   if (!vin) {
@@ -118,7 +179,7 @@ export const getCarInfoByPlate = (plate) => {
     success: true,
     message: 'Информация об автомобиле успешно загружена',
     data: {
-      plate: plate,
+      plate: plate.toUpperCase(),
       vin: vin,
       ...carInfo
     }

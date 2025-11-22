@@ -6,7 +6,7 @@ import { checkCarExists } from '../data/cars'
 const AddCarForm = ({ onAdd, onCancel, cars }) => {
   const [plate, setPlate] = useState('')
   const [pricePerDay, setPricePerDay] = useState('')
-  const [photos, setPhotos] = useState(Array(5).fill(null)) // Заглушка для 5 фото
+  const [photos, setPhotos] = useState(Array(5).fill(null)) // Массив для хранения URL фотографий
   const [carInfo, setCarInfo] = useState(null) // Информация об автомобиле из базы данных
   const [loading, setLoading] = useState(false) // Состояние загрузки
   const [error, setError] = useState('') // Ошибка при поиске автомобиля
@@ -66,10 +66,17 @@ const AddCarForm = ({ onAdd, onCancel, cars }) => {
       return
     }
     
+    // Проверяем, что загружены все фотографии
+    if (photos.some(photo => !photo)) {
+      alert('Пожалуйста, загрузите все 5 фотографий автомобиля')
+      return
+    }
+    
     // Если информация об автомобиле найдена, используем её
     const newCar = {
       plate: plate.toUpperCase(),
       pricePerDay: parseInt(pricePerDay),
+      photos: [...photos], // Копируем массив фотографий
       // Если есть информация об автомобиле, добавляем её
       ...(carInfo ? {
         brand: carInfo.brand,
@@ -85,9 +92,7 @@ const AddCarForm = ({ onAdd, onCancel, cars }) => {
         year: new Date().getFullYear(),
         color: 'Не указан',
         transmission: 'automatic'
-      }),
-      // Добавляем заглушку для фото
-      photos: photos.map((_, index) => `https://images.unsplash.com/photo-${index + 1}?w=300&h=200&fit=crop`)
+      })
     }
     
     onAdd(newCar)
@@ -140,15 +145,51 @@ const AddCarForm = ({ onAdd, onCancel, cars }) => {
     }
   }
 
-  // Заглушка для фото - просто отображаем пустые блоки
-  const renderPhotoPlaceholders = () => {
+  // Обработчик изменения фотографии
+  const handlePhotoChange = (index, file) => {
+    if (file) {
+      const reader = new FileReader()
+      reader.onload = (e) => {
+        const newPhotos = [...photos]
+        newPhotos[index] = e.target.result
+        setPhotos(newPhotos)
+      }
+      reader.readAsDataURL(file)
+    }
+  }
+
+  // Рендеринг блоков для загрузки фотографий
+  const renderPhotoUploaders = () => {
     return (
       <div className="photos-grid">
-        {photos.map((_, index) => (
+        {photos.map((photo, index) => (
           <div key={index} className="photo-placeholder">
-            <div className="photo-placeholder-content">
-              <span className="photo-placeholder-text">Фото {index + 1}</span>
-            </div>
+            {photo ? (
+              <div className="photo-preview">
+                <img src={photo} alt={`Фото ${index + 1}`} />
+                <button 
+                  type="button" 
+                  className="remove-photo-button"
+                  onClick={() => {
+                    const newPhotos = [...photos]
+                    newPhotos[index] = null
+                    setPhotos(newPhotos)
+                  }}
+                >
+                  ×
+                </button>
+              </div>
+            ) : (
+              <div className="photo-upload-area">
+                <div className="photo-placeholder-text">Фото {index + 1}</div>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => handlePhotoChange(index, e.target.files[0])}
+                  className="photo-input"
+                />
+              </div>
+            )}
           </div>
         ))}
       </div>
@@ -161,7 +202,12 @@ const AddCarForm = ({ onAdd, onCancel, cars }) => {
     // 1. Введен госномер
     // 2. Найдена информация об автомобиле или нет ошибки существования
     // 3. Введена корректная цена
-    return plate.trim().length > 0 && !carExistsError && pricePerDay.trim().length > 0 && parseInt(pricePerDay) > 0
+    // 4. Все фотографии загружены
+    return plate.trim().length > 0 && 
+           !carExistsError && 
+           pricePerDay.trim().length > 0 && 
+           parseInt(pricePerDay) > 0 &&
+           photos.every(photo => photo !== null)
   }
 
   // Проверка валидности стоимости
@@ -252,11 +298,11 @@ const AddCarForm = ({ onAdd, onCancel, cars }) => {
           </div>
           
           <div className="form-group">
-            <label>Фотографии автомобиля:</label>
+            <label>Фотографии автомобиля *:</label>
             <div className="photos-info">
-              <div className="input-hint">Необходимо загрузить минимум 5 фотографий</div>
+              <div className="input-hint">Необходимо загрузить 5 фотографий</div>
             </div>
-            {renderPhotoPlaceholders()}
+            {renderPhotoUploaders()}
           </div>
           
           <div className="form-actions">
