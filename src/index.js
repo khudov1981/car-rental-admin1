@@ -1,13 +1,13 @@
 const TelegramBot = require('node-telegram-bot-api');
 
-// Замените 'YOUR_TELEGRAM_BOT_TOKEN' на токен вашего бота
-const token = 'YOUR_TELEGRAM_BOT_TOKEN';
+// Токен бота
+const token = '8036247117:AAF6XNOrDqmBvOIX6zsI8Fbafv9Z8lCAl94';
 
 // Создаем экземпляр бота
 const bot = new TelegramBot(token, { polling: true });
 
 // Обрабатываем команду /start
-bot.onText(/\\/start/, (msg) => {
+bot.onText(/\/start/, (msg) => {
   const chatId = msg.chat.id;
   
   // Отправляем приветственное сообщение
