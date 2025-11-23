@@ -3,6 +3,7 @@ import './CarForm.css'
 import { getCarInfoByPlate } from '../data/plateVinDatabase'
 import { checkCarExists } from '../data/cars'
 import ImageUploader from './ImageUploader'
+import { formatPlateDisplay, formatInsuranceDisplay } from '../utils/formatters'
 
 const CarForm = ({ 
   car = null, 
@@ -131,47 +132,6 @@ const CarForm = ({
       setCarInfo(null)
       setError('')
       setCarExistsError('')
-    }
-  }
-
-  // Форматирование отображаемого значения госномера
-  const formatPlateDisplay = (value) => {
-    if (!value) return ''
-    
-    // Формат: X000XX000 (1 буква, 3 цифры, 2 буквы, 2-3 цифры региона)
-    const cleanValue = value.replace(/[^A-Z0-9А-Я]/g, '')
-    
-    if (cleanValue.length <= 1) {
-      return cleanValue
-    } else if (cleanValue.length <= 4) {
-      return cleanValue.substring(0, 1) + cleanValue.substring(1).replace(/\D/g, '')
-    } else if (cleanValue.length <= 6) {
-      const letterPart = cleanValue.substring(0, 1)
-      const numberPart = cleanValue.substring(1, 4)
-      const letterPart2 = cleanValue.substring(4, 6)
-      return letterPart + numberPart + letterPart2
-    } else {
-      const letterPart = cleanValue.substring(0, 1)
-      const numberPart = cleanValue.substring(1, 4)
-      const letterPart2 = cleanValue.substring(4, 6)
-      const regionPart = cleanValue.substring(6, 9)
-      return letterPart + numberPart + letterPart2 + regionPart
-    }
-  }
-
-  // Форматирование отображаемого значения ОСАГО
-  const formatInsuranceDisplay = (value) => {
-    if (!value) return ''
-    
-    // Формат: XXX0000000000 (3 буквы, 10 цифр)
-    const cleanValue = value.replace(/[^A-Z0-9]/g, '')
-    
-    if (cleanValue.length <= 3) {
-      return cleanValue
-    } else {
-      const letterPart = cleanValue.substring(0, 3)
-      const numberPart = cleanValue.substring(3, 13)
-      return letterPart + numberPart
     }
   }
 
