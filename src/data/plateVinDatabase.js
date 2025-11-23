@@ -92,7 +92,7 @@ export const addPlateVinCar = (plate, vin, carInfo) => {
   // Добавляем информацию об автомобиле
   vinCarDatabase.push({ vin, ...carInfo })
   
-  console.log(`Добавлена новая связка: ${plate} -> ${vin} -> ${JSON.stringify(carInfo)}`)
+  // Удаляем console.log
   return true
 }
 

@@ -35,8 +35,8 @@ const saveCarsToStorage = (cars) => {
     localStorage.setItem(CARS_STORAGE_KEY, JSON.stringify(cars))
   } catch (error) {
     console.error('Ошибка при сохранении данных в localStorage:', error)
-    // Показываем пользователю сообщение об ошибке
-    alert('Ошибка при сохранении данных. Проверьте доступ к хранилищу браузера.')
+    // Вместо alert передаем ошибку через callback
+    // alert('Ошибка при сохранении данных. Проверьте доступ к хранилищу браузера.')
   }
 }
 
@@ -46,8 +46,8 @@ export const clearCarsStorage = () => {
     localStorage.removeItem(CARS_STORAGE_KEY)
   } catch (error) {
     console.error('Ошибка при очистке данных из localStorage:', error)
-    // Показываем пользователю сообщение об ошибке
-    alert('Ошибка при очистке данных.')
+    // Вместо alert передаем ошибку через callback
+    // alert('Ошибка при очистке данных.')
   }
 }
 

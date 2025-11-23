@@ -12,8 +12,8 @@ const webAppUrl = process.env.WEB_APP_URL || 'https://your-app-url.com';
 
 // Проверяем наличие токена
 if (!token) {
-  console.error('Ошибка: Не найден токен бота. Установите переменную окружения TELEGRAM_BOT_TOKEN');
-  process.exit(1);
+  // Вместо console.error используем throw new Error
+  throw new Error('Ошибка: Не найден токен бота. Установите переменную окружения TELEGRAM_BOT_TOKEN');
 }
 
 // Создаем экземпляр бота
@@ -63,4 +63,4 @@ bot.onText(/\/menu/, (msg) => {
   });
 });
 
-console.log('Telegram bot запущен и готов к работе!');
+// Удаляем console.log

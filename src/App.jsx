@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import './App.css'
 import Navigation from './components/Navigation'
 import CarList from './components/CarList'
 import ConfirmModal from './components/ConfirmModal'
 import CarForm from './components/CarForm'
 import Settings from './components/Settings'
+import NotificationContainer from './components/NotificationContainer'
 import { addCar, updateCar, deleteCar, restoreCar, getActiveCars, getDeletedCars, getCarsFromStorage, clearCarsStorage } from './data/cars'
 
 function App() {
@@ -19,6 +20,7 @@ function App() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [formMode, setFormMode] = useState('add') // 'add' или 'edit'
+  const notificationContainerRef = useRef(null)
 
   // Инициализация данных об автомобилях из localStorage
   useEffect(() => {
@@ -40,10 +42,10 @@ function App() {
       webApp.ready()
       
       // Получаем данные о пользователе
-      console.log('Telegram WebApp available');
-      console.log('initDataUnsafe:', webApp.initDataUnsafe);
+      // console.log('Telegram WebApp available');
+      // console.log('initDataUnsafe:', webApp.initDataUnsafe);
       const user = webApp.initDataUnsafe.user || null
-      console.log('User data:', user);
+      // console.log('User data:', user);
       setTelegramUser(user)
       
       // Обновляем title страницы
@@ -64,18 +66,25 @@ function App() {
       // Отключаем возможность закрытия приложения свайпом вниз
       webApp.disableVerticalSwipes()
     } else {
-      console.log('Telegram WebApp not available');
+      // console.log('Telegram WebApp not available');
     }
   }, [])
+
+  const showNotification = (message, type = 'info') => {
+    if (notificationContainerRef.current) {
+      notificationContainerRef.current.addNotification(message, type)
+    }
+  }
 
   const handleAddCar = (carData) => {
     try {
       const newCars = addCar(carData, cars)
       setCars(newCars)
       setShowCarForm(false)
+      showNotification('Автомобиль успешно добавлен!', 'success')
     } catch (err) {
       console.error('Ошибка при добавлении автомобиля:', err)
-      alert('Не удалось добавить автомобиль. Попробуйте еще раз.')
+      showNotification('Не удалось добавить автомобиль. Попробуйте еще раз.', 'error')
     }
   }
 
@@ -85,9 +94,10 @@ function App() {
       setCars(newCars)
       setShowCarForm(false)
       setEditingCar(null)
+      showNotification('Автомобиль успешно обновлен!', 'success')
     } catch (err) {
       console.error('Ошибка при обновлении автомобиля:', err)
-      alert('Не удалось обновить автомобиль. Попробуйте еще раз.')
+      showNotification('Не удалось обновить автомобиль. Попробуйте еще раз.', 'error')
     }
   }
 
@@ -105,9 +115,10 @@ function App() {
         const newCars = deleteCar(carToDelete.id, cars)
         setCars(newCars)
         setCarToDelete(null)
+        showNotification('Автомобиль успешно удален!', 'success')
       } catch (err) {
         console.error('Ошибка при удалении автомобиля:', err)
-        alert('Не удалось удалить автомобиль. Попробуйте еще раз.')
+        showNotification('Не удалось удалить автомобиль. Попробуйте еще раз.', 'error')
       }
     }
   }
@@ -116,9 +127,10 @@ function App() {
     try {
       const newCars = restoreCar(id, cars)
       setCars(newCars)
+      showNotification('Автомобиль успешно восстановлен!', 'success')
     } catch (err) {
       console.error('Ошибка при восстановлении автомобиля:', err)
-      alert('Не удалось восстановить автомобиль. Попробуйте еще раз.')
+      showNotification('Не удалось восстановить автомобиль. Попробуйте еще раз.', 'error')
     }
   }
 
@@ -165,14 +177,25 @@ function App() {
     setCarToDelete(null)
   }
 
-  const handleClearData = () => {
+  const handleClearData = (data) => {
+    // Проверяем, является ли вызов сохранением настроек или очисткой данных
+    if (data && data.type === 'settings_saved') {
+      showNotification('Настройки сохранены!', 'success')
+      return
+    }
+    
+    if (data && data.error) {
+      showNotification(data.error, 'error')
+      return
+    }
+    
     try {
       clearCarsStorage()
       setCars([])
-      alert('Все данные очищены!')
+      showNotification('Все данные очищены!', 'success')
     } catch (err) {
       console.error('Ошибка при очистке данных:', err)
-      alert('Не удалось очистить данные. Попробуйте еще раз.')
+      showNotification('Не удалось очистить данные. Попробуйте еще раз.', 'error')
     }
   }
 
@@ -221,6 +244,19 @@ function App() {
 
   return (
     <div className="App">
+      <header className="app-header">
+        <h1>{telegramUser ? `${telegramUser.first_name}` : 'Админ панель'}</h1>
+        {telegramUser && (
+          <div className="user-info">
+            Привет, {telegramUser.first_name}!
+          </div>
+        )}
+        {/* Отладочная информация */}
+        <div style={{ fontSize: '0.8rem', color: '#666', marginTop: '5px' }}>
+          {telegramUser ? `ID: ${telegramUser.id}` : 'Пользователь не определен'}
+        </div>
+      </header>
+      
       <main className="app-content">
         {activePage === 'cars' && (
           <div className="page-content">
@@ -276,7 +312,13 @@ function App() {
       {showCarForm && (
         <CarForm
           car={editingCar}
-          onSubmit={handleSaveCar}
+          onSubmit={(data) => {
+            if (data && data.error) {
+              showNotification(data.error, 'error')
+            } else {
+              handleSaveCar(data)
+            }
+          }}
           onCancel={handleCancelForm}
           cars={cars}
           mode={formMode}
@@ -293,6 +335,8 @@ function App() {
         cancelText="Отмена"
         confirmButtonClass="delete-button"
       />
+      
+      <NotificationContainer ref={notificationContainerRef} />
     </div>
   )
 }

@@ -21,7 +21,11 @@ const Settings = ({ telegramUser, onClearData }) => {
 
   const handleSave = () => {
     // Здесь будет логика сохранения настроек
-    alert('Настройки сохранены!')
+    // Вместо alert показываем уведомление через родительский компонент
+    if (onClearData) {
+      // Передаем информацию о сохранении через callback
+      onClearData({ type: 'settings_saved' });
+    }
   }
 
   const handleClearData = () => {
@@ -31,7 +35,7 @@ const Settings = ({ telegramUser, onClearData }) => {
   const confirmClearData = () => {
     onClearData()
     setIsDeleteModalOpen(false)
-    alert('Все данные очищены!')
+    // Уведомление о очистке данных будет показано в родительском компоненте
   }
 
   const cancelClearData = () => {
