@@ -221,10 +221,6 @@ function App() {
 
   return (
     <div className="App">
-      <header className="app-header">
-        {/* Информация о пользователе удалена по запросу */}
-      </header>
-      
       <main className="app-content">
         {activePage === 'cars' && (
           <div className="page-content">
