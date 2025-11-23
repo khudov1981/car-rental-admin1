@@ -4,6 +4,7 @@ import Navigation from './components/Navigation'
 import CarList from './components/CarList'
 import ConfirmModal from './components/ConfirmModal'
 import CarForm from './components/CarForm'
+import Settings from './components/Settings'
 import { addCar, updateCar, deleteCar, restoreCar, getActiveCars, getDeletedCars, getCarsFromStorage, clearCarsStorage } from './data/cars'
 
 function App() {
@@ -164,6 +165,17 @@ function App() {
     setCarToDelete(null)
   }
 
+  const handleClearData = () => {
+    try {
+      clearCarsStorage()
+      setCars([])
+      alert('Все данные очищены!')
+    } catch (err) {
+      console.error('Ошибка при очистке данных:', err)
+      alert('Не удалось очистить данные. Попробуйте еще раз.')
+    }
+  }
+
   if (loading) {
     return (
       <div className="App">
@@ -262,6 +274,13 @@ function App() {
               <button className="tg-button">Добавить клиента</button>
             </div>
           </div>
+        )}
+        
+        {activePage === 'settings' && (
+          <Settings 
+            telegramUser={telegramUser}
+            onClearData={handleClearData}
+          />
         )}
       </main>
       
