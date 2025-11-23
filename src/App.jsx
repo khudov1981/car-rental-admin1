@@ -222,16 +222,7 @@ function App() {
   return (
     <div className="App">
       <header className="app-header">
-        <h1>{telegramUser ? `${telegramUser.first_name}` : 'Админ панель'}</h1>
-        {telegramUser && (
-          <div className="user-info">
-            Привет, {telegramUser.first_name}!
-          </div>
-        )}
-        {/* Отладочная информация */}
-        <div style={{ fontSize: '0.8rem', color: '#666', marginTop: '5px' }}>
-          {telegramUser ? `ID: ${telegramUser.id}` : 'Пользователь не определен'}
-        </div>
+        {/* Информация о пользователе удалена по запросу */}
       </header>
       
       <main className="app-content">
