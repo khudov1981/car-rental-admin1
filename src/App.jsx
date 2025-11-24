@@ -4,6 +4,7 @@ import Navigation from './components/Navigation'
 import CarList from './components/CarList'
 import ConfirmModal from './components/ConfirmModal'
 import CarForm from './components/CarForm'
+import FullScreenCarForm from './components/FullScreenCarForm'
 import Settings from './components/Settings'
 import NotificationContainer from './components/NotificationContainer'
 import { addCar, updateCar, deleteCar, restoreCar, getActiveCars, getDeletedCars, getCarsFromStorage, clearCarsStorage } from './data/cars'
@@ -13,6 +14,7 @@ function App() {
   const [telegramUser, setTelegramUser] = useState(null)
   const [cars, setCars] = useState([])
   const [showCarForm, setShowCarForm] = useState(false)
+  const [showFullScreenCarForm, setShowFullScreenCarForm] = useState(false)
   const [editingCar, setEditingCar] = useState(null)
   const [showDeleted, setShowDeleted] = useState(false)
   const [showDeleteModal, setShowDeleteModal] = useState(false)
@@ -81,6 +83,7 @@ function App() {
       const newCars = addCar(carData, cars)
       setCars(newCars)
       setShowCarForm(false)
+      setShowFullScreenCarForm(false)
       showNotification('Автомобиль успешно добавлен!', 'success')
     } catch (err) {
       console.error('Ошибка при добавлении автомобиля:', err)
@@ -93,6 +96,7 @@ function App() {
       const newCars = updateCar(id, carData, cars)
       setCars(newCars)
       setShowCarForm(false)
+      setShowFullScreenCarForm(false)
       setEditingCar(null)
       showNotification('Автомобиль успешно обновлен!', 'success')
     } catch (err) {
@@ -150,6 +154,7 @@ function App() {
 
   const handleCancelForm = () => {
     setShowCarForm(false)
+    setShowFullScreenCarForm(false)
     setEditingCar(null)
     setFormMode('add')
   }
@@ -157,6 +162,11 @@ function App() {
   const handleShowAddForm = () => {
     setFormMode('add')
     setShowCarForm(true)
+  }
+
+  const handleShowFullScreenAddForm = () => {
+    setFormMode('add')
+    setShowFullScreenCarForm(true)
   }
 
   const toggleDeletedView = () => {
@@ -271,6 +281,13 @@ function App() {
                   + Добавить авто
                 </button>
                 <button 
+                  className="tg-button add-car-button-fullscreen"
+                  onClick={handleShowFullScreenAddForm}
+                  style={{ display: showDeleted ? 'none' : 'block', marginLeft: '10px' }}
+                >
+                  + Добавить авто (полноэкранная форма)
+                </button>
+                <button 
                   className="tg-button toggle-deleted-button"
                   onClick={toggleDeletedView}
                 >
@@ -322,6 +339,15 @@ function App() {
           onCancel={handleCancelForm}
           cars={cars}
           mode={formMode}
+        />
+      )}
+      
+      {showFullScreenCarForm && (
+        <FullScreenCarForm
+          onSubmit={(data) => {
+            handleAddCar(data)
+          }}
+          onCancel={handleCancelForm}
         />
       )}
       
