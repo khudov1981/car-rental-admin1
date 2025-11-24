@@ -6,6 +6,7 @@ import ConfirmModal from './components/ConfirmModal'
 import CarForm from './components/CarForm'
 import Settings from './components/Settings'
 import NotificationContainer from './components/NotificationContainer'
+import AddCarPage from './components/AddCarPage'
 import { addCar, updateCar, deleteCar, restoreCar, getActiveCars, getDeletedCars, getCarsFromStorage, clearCarsStorage } from './data/cars'
 
 function App() {
@@ -80,7 +81,7 @@ function App() {
     try {
       const newCars = addCar(carData, cars)
       setCars(newCars)
-      setShowCarForm(false)
+      setActivePage('cars') // Возвращаемся к списку авто вместо закрытия модального окна
       showNotification('Автомобиль успешно добавлен!', 'success')
     } catch (err) {
       console.error('Ошибка при добавлении автомобиля:', err)
@@ -156,7 +157,8 @@ function App() {
 
   const handleShowAddForm = () => {
     setFormMode('add')
-    setShowCarForm(true)
+    // Вместо открытия модального окна, переключаемся на страницу добавления авто
+    setActivePage('add-car')
   }
 
   const toggleDeletedView = () => {
@@ -287,6 +289,14 @@ function App() {
               showDeleted={showDeleted}
             />
           </div>
+        )}
+        
+        {activePage === 'add-car' && (
+          <AddCarPage
+            cars={cars}
+            onAddCar={handleAddCar}
+            onBack={() => setActivePage('cars')}
+          />
         )}
         
         {activePage === 'clients' && (
